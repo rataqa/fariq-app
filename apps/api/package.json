@@ -1,0 +1,31 @@
+{
+  "name": "@fariq/api",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "dev": "ts-node src/index.ts",
+    "start": "node dist/index.js",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@fariq/shared": "*",
+    "@rataqa/jalb": "^1.0.3",
+    "@rataqa/muhit": "^1.0.2",
+    "@rataqa/sijil": "^1.0.4",
+    "@rataqa/wasit": "^1.0.3",
+    "axios": "^1.13.6",
+    "azure-devops-node-api": "^15.1.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.3.1",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.10.5",
+    "typescript": "*"
+  }
+}

@@ -1,0 +1,34 @@
+import { MuhitService } from '@rataqa/muhit';
+
+// TODO: avoid using .js
+import { IConfig, IEnvSettings } from './types.js';
+import { base64 } from '../../utils/index.js';
+
+export class MyEnvSettings extends MuhitService<IEnvSettings> {
+  config(): IConfig {
+    const azureUrl = this.str('AZURE_DEVOPS_BASE_URL', 'https://dev.azure.com');
+    const azureOrg = this.strRequired('AZURE_DEVOPS_ORG');
+    const azurePat = this.strRequired('AZURE_DEVOPS_PAT');
+    return {
+      appInfo: {
+        appName: 'api',
+        appVersion: '1.2.3',
+      },
+      http: {
+        port: this.portRequired('HTTP_PORT'),
+      },
+      logger: {
+        level: this.str('LOG_LEVEL', 'info'),
+      },
+      azureDevOps: {
+        azureUrl,
+        orgRef    : azureOrg,
+        orgUrl    : `${azureUrl}/${azureOrg}`,
+        projectRef: this.strRequired('AZURE_DEVOPS_PROJECT'),
+        user      : this.strRequired('AZURE_DEVOPS_USER'),
+        pat       : azurePat,
+        pat64     : base64.fromStr(azurePat),
+      },
+    };
+  }
+}
