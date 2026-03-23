@@ -12,7 +12,7 @@ export function makeAzureDevOpsApiViaSdk(
 ) {
 
   const authHandler = AzDev.getPersonalAccessTokenHandler(conf.pat);
-  const webApi = new AzDev.WebApi(conf.orgUrl, authHandler);
+  const webApi = new AzDev.WebApi(conf.azureUrl + '/' + conf.orgRef, authHandler);
   
   async function teams() {
     const connected = await webApi.connect();

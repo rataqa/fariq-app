@@ -7,6 +7,7 @@ import { base64 } from '../../utils/index.js';
 export class MyEnvSettings extends MuhitService<IEnvSettings> {
   config(): IConfig {
     const azureUrl = this.str('AZURE_DEVOPS_BASE_URL', 'https://dev.azure.com');
+    const vsspsUrl = this.str('AZURE_VSSPS_BASE_URL', 'https://vssps.dev.azure.com');
     const azureOrg = this.strRequired('AZURE_DEVOPS_ORG');
     const azurePat = this.strRequired('AZURE_DEVOPS_PAT');
     return {
@@ -21,9 +22,9 @@ export class MyEnvSettings extends MuhitService<IEnvSettings> {
         level: this.str('LOG_LEVEL', 'info'),
       },
       azureDevOps: {
+        vsspsUrl,
         azureUrl,
         orgRef    : azureOrg,
-        orgUrl    : `${azureUrl}/${azureOrg}`,
         projectRef: this.strRequired('AZURE_DEVOPS_PROJECT'),
         user      : this.strRequired('AZURE_DEVOPS_USER'),
         pat       : azurePat,

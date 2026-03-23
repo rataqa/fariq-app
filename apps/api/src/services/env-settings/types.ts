@@ -5,6 +5,7 @@ export interface IEnvSettings extends IProcessEnv {
   LOG_LEVEL?: string;
 
   AZURE_DEVOPS_BASE_URL?: string;
+  AZURE_VSSPS_BASE_URL?: string;
   AZURE_DEVOPS_ORG     ?: string;
   AZURE_DEVOPS_PROJECT ?: string;
   AZURE_DEVOPS_USER    ?: string;
@@ -24,8 +25,8 @@ export interface IConfig {
   };
   azureDevOps: {
     azureUrl  : string;
+    vsspsUrl  : string;
     orgRef    : string;
-    orgUrl    : string;
     projectRef: string;
     user      : string;
     pat       : string;
