@@ -17,3 +17,9 @@ export type IRequestByMember = Request<IRequestParamsByMember>;
 interface IRequestParamsByMember {
   userDescriptor: string;
 }
+
+export type IRequestByProjectAndRepo = Request<IRequestParamsByProjectAndRepo>;
+
+interface IRequestParamsByProjectAndRepo extends IRequestParamsByProject {
+  repoId: string;
+}

@@ -4,8 +4,17 @@
 import axios from 'axios';
 import { IBasicLogger } from '@rataqa/sijil';
 
-import { IConfig } from '../env-settings/types.js';
-import { base64 } from '../../utils/index.js';
+import { IConfig } from '../env-settings/types';
+import { base64 } from '../../utils';
+import { AzureDevOpsModels as M } from './types';
+
+import { UserAdapter, UsersAdapter } from './users/adapters';
+import { MembersAdapter } from './members/adapters';
+import { TeamsAdapter } from './teams/adapters';
+import { ProjectsAdapter } from './projects/adapters';
+import { ReposAdapter } from './repos/adapters';
+import { RepoPullRequestsAdapter } from './repo-pull-requests/adapters';
+import { RepoStatsAdapter } from './repo-stats/adapters';
 
 export type IAzureDevOpsApi = ReturnType<typeof makeAzureDevOpsApi>;
 
@@ -30,8 +39,8 @@ export function makeAzureDevOpsApi(
   function makeOrgApi() {
 
     async function projects() {
-      const res = await client.get(`/${orgRef}/_apis/projects`);
-      return res.data;
+      const res = await client.get<M.IProjects>(`/${orgRef}/_apis/projects`);
+      return new ProjectsAdapter(res.data);
     }
 
     async function project(projectId = projectRef) {
@@ -40,8 +49,8 @@ export function makeAzureDevOpsApi(
     }
 
     async function teams(projectId = projectRef) {
-      const res = await client.get(`/${orgRef}/_apis/projects/${projectId}/teams`);
-      return res.data;
+      const res = await client.get<M.ITeams>(`/${orgRef}/_apis/projects/${projectId}/teams`);
+      return new TeamsAdapter(res.data);
     }
 
     async function team(projectId = projectRef, teamId: string) {
@@ -50,13 +59,33 @@ export function makeAzureDevOpsApi(
     }
 
     async function teamMembers(projectId = projectRef, teamId: string) {
-      const res = await client.get(`/${orgRef}/_apis/projects/${projectId}/teams/${teamId}/members`);
-      return res.data;
+      const res = await client.get<M.ITeamMembers>(`/${orgRef}/_apis/projects/${projectId}/teams/${teamId}/members`);
+      return new MembersAdapter(res.data);
+    }
+
+    async function users() {
+      const res = await clientVssps.get<M.IUsers>(`/${orgRef}/_apis/graph/users`);
+      return new UsersAdapter(res.data);
     }
 
     async function user(userDescriptor: string) {
-      const res = await clientVssps.get(`/${orgRef}/_apis/graph/users/${userDescriptor}`);
-      return res.data;
+      const res = await clientVssps.get<M.IUser>(`/${orgRef}/_apis/graph/users/${userDescriptor}`);
+      return new UserAdapter(res.data);
+    }
+
+    async function repos(projectId = projectRef) {
+      const res = await client.get<M.IRepos>(`/${orgRef}/${projectId}/_apis/git/repositories`);
+      return new ReposAdapter(res.data);
+    }
+
+    async function repoPullRequests(repoId: string, projectId = projectRef) {
+      const res = await client.get<M.IRepoPullRequests>(`/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/pullrequests`);
+      return new RepoPullRequestsAdapter(res.data);
+    }
+
+    async function repoStats(repoId: string, projectId = projectRef) {
+      const res = await client.get<M.IRepoStats>(`/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/stats/branches`);
+      return new RepoStatsAdapter(res.data);
     }
 
     return {
@@ -65,7 +94,11 @@ export function makeAzureDevOpsApi(
       teams,
       team,
       teamMembers,
+      users,
       user,
+      repos,
+      repoPullRequests,
+      repoStats,
     };
   }
 

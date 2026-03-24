@@ -1,8 +1,7 @@
 import { MuhitService } from '@rataqa/muhit';
 
-// TODO: avoid using .js
-import { IConfig, IEnvSettings } from './types.js';
-import { base64 } from '../../utils/index.js';
+import { IConfig, IEnvSettings } from './types';
+import { base64 } from '../../utils';
 
 export class MyEnvSettings extends MuhitService<IEnvSettings> {
   config(): IConfig {

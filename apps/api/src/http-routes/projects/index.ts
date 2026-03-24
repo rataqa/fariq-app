@@ -1,10 +1,9 @@
 import { Application, Request } from 'express';
 
-import { IResponse } from '../types.js';
+import { IResponse } from '../types';
 
-// TODO: avoid using .js
-import { IAzureDevOpsApi } from '../../services/azure-devops/index.js';
-import { IRequestByMember, IRequestByProject, IRequestByProjectAndTeam } from './types.js';
+import { IAzureDevOpsApi } from '../../services/azure-devops';
+import { IRequestByMember, IRequestByProject, IRequestByProjectAndRepo, IRequestByProjectAndTeam } from './types';
 
 export default function makeRoutes(
   app: Application,
@@ -13,76 +12,36 @@ export default function makeRoutes(
   
   async function getProjects(_req: Request, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
-    const { log } = res.locals;
-    log.info('getProjects');
-    try {
-      const result = await api.projects();
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.projects();
+    res.json(result.adapt());
   }
 
   async function getProject(req: IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
-    const { log } = res.locals;
-    log.info('getProject');
-    try {
-      const result = await api.project(projectId);
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.project(projectId);
+    res.json(result);
   }
 
   async function getTeams(req: IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
-    const { log } = res.locals;
-    log.info('getTeams');
-    try {
-      const result = await api.teams(projectId);
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.teams(projectId);
+    res.json(result.adapt());
   }
 
   async function getTeam(req: IRequestByProjectAndTeam, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
-    const { log } = res.locals;
-    log.info('getTeam');
-    try {
-      const result = await api.team(projectId, teamId);
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.team(projectId, teamId);
+    res.json(result);
   }
 
   async function getTeamMembers(req: IRequestByProjectAndTeam, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
-    const { log } = res.locals;
-    log.info('getTeamMembers');
-    try {
-      const result = await api.teamMembers(projectId, teamId);
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.teamMembers(projectId, teamId);
+    res.json(result.adapt());
   }
 
   /*async function getAllMembers(req: IRequestByProjectAndTeam, res: IResponse) {
@@ -100,19 +59,38 @@ export default function makeRoutes(
     }
   }*/
 
+  async function getUsers(req: IRequestByMember, res: IResponse) {
+    const api = azureDevOps.makeOrgApi();
+    const result = await api.users();
+    res.json(result.adapt());
+  }
+
   async function getUser(req: IRequestByMember, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { userDescriptor } = req.params;
-    const { log } = res.locals;
-    log.info('getUser');
-    try {
-      const result = await api.user(userDescriptor);
-      res.json(result);
-    } catch (err: any) {
-      log.warn('Invalid request', { err: err?.stack });
-      const error = err instanceof Error ? err.message : 'Bad request';
-      res.status(404).json({ error });
-    }
+    const result = await api.user(userDescriptor);
+    res.json(result);
+  }
+
+  async function getRepos(req: IRequestByProject, res: IResponse) {
+    const api = azureDevOps.makeOrgApi();
+    const { projectId } = req.params;
+    const result = await api.repos(projectId);
+    res.json(result.adapt());
+  }
+
+  async function getRepoPullRequests(req: IRequestByProjectAndRepo, res: IResponse) {
+    const api = azureDevOps.makeOrgApi();
+    const { projectId, repoId } = req.params;
+    const result = await api.repoPullRequests(repoId, projectId);
+    res.json(result.adapt());
+  }
+
+  async function getRepoStats(req: IRequestByProjectAndRepo, res: IResponse) {
+    const api = azureDevOps.makeOrgApi();
+    const { projectId, repoId } = req.params;
+    const result = await api.repoStats(repoId, projectId);
+    res.json(result.adapt());
   }
 
   app.get('/projects', getProjects);
@@ -121,7 +99,11 @@ export default function makeRoutes(
   app.get('/projects/:projectId/teams/:teamId', getTeam);
   app.get('/projects/:projectId/teams/:teamId/members', getTeamMembers);
   //app.get('/projects/:projectId/all/members', getAllMembers); // TODO
+  app.get('/users', getUsers);
   app.get('/users/:userDescriptor', getUser);
+  app.get('/projects/:projectId/repos', getRepos);
+  app.get('/projects/:projectId/repos/:repoId/pull-requests', getRepoPullRequests);
+  app.get('/projects/:projectId/repos/:repoId/stats', getRepoStats);
 
   return {
     getProjects,
@@ -129,6 +111,10 @@ export default function makeRoutes(
     getTeams,
     getTeam,
     getTeamMembers,
+    getUsers,
     getUser,
+    getRepos,
+    getRepoPullRequests,
+    getRepoStats,
   };
 }

@@ -1,6 +1,6 @@
 import { Application, Request, Response } from 'express';
 
-import { IConfig } from '../services/env-settings/types.js';
+import { IConfig } from '../services/env-settings/types';
 
 export function makeRoutes(
   app: Application,

@@ -1,4 +1,4 @@
-import { factory } from './factory.js';
+import { factory } from './factory';
 
 main();
 
