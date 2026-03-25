@@ -29,6 +29,9 @@ export class MyEnvSettings extends MuhitService<IEnvSettings> {
         pat       : azurePat,
         pat64     : base64.fromStr(azurePat),
       },
+      lowdb: {
+        filePath: this.str('LOWDB_FILE_PATH', '../../db.json'),
+      },
     };
   }
 }

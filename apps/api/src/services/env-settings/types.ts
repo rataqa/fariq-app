@@ -10,6 +10,8 @@ export interface IEnvSettings extends IProcessEnv {
   AZURE_DEVOPS_PROJECT ?: string;
   AZURE_DEVOPS_USER    ?: string;
   AZURE_DEVOPS_PAT     ?: string;
+
+  LOWDB_FILE_PATH?: string;
 }
 
 export interface IConfig {
@@ -31,5 +33,8 @@ export interface IConfig {
     user      : string;
     pat       : string;
     pat64     : string;  // in base64
+  };
+  lowdb: {
+    filePath: string;
   };
 }
