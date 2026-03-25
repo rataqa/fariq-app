@@ -5,18 +5,47 @@ export namespace Users {
   }
 
   export interface Value {
-    subjectKind    : string;
-    metaType      ?: string;
+    /**
+     * Identifier
+     */
+    descriptor: string;
+
+    /**
+     * 'user'
+     */
+    subjectKind: string;
+
+    /**
+     * 'member', 'guest' or undefined
+     */
+    metaType?: string;
+
+    /**
+     * username
+     */
     directoryAlias?: string;
-    domain         : string;
-    principalName  : string;
-    mailAddress    : string;
-    origin         : string;
-    originId       : string;
-    displayName    : string;
-    _links         : Links;
-    url            : string;
-    descriptor     : string;
+
+    domain: string;
+
+    /**
+     * username but sometimes it is a UUID v4
+     */
+    principalName: string;
+
+    /**
+     * email address but sometimes it is empty string
+     */
+    mailAddress: string;
+
+    /**
+     * Full name
+     */
+    displayName: string;
+
+    origin  : string;
+    originId: string;
+    url     : string;
+    _links  : Links;
   }
 
   export interface Links {
@@ -51,6 +80,11 @@ export namespace Users {
 export namespace User {
   export interface Root {
     /**
+     * Identifier
+     */
+    descriptor: string;
+
+    /**
      * 'user'
      */
     subjectKind: string;
@@ -61,7 +95,8 @@ export namespace User {
     metaType?: string;
 
     directoryAlias: string;
-    domain        : string;
+
+    domain: string;
     
     /**
      * username but sometimes it is a UUID v4
@@ -76,7 +111,7 @@ export namespace User {
     /**
      * 'aad'
      */
-    origin        : string;
+    origin: string;
 
     /**
      * AAD identifier
@@ -87,9 +122,10 @@ export namespace User {
      * Full name
      */
     displayName: string;
-    _links     : Links;
-    url        : string;
-    descriptor : string;
+
+    _links: Links;
+
+    url: string;
   }
 
   export interface Links {

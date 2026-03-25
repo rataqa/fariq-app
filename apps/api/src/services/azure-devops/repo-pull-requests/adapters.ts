@@ -12,7 +12,7 @@ export class RepoPullRequestsAdapter {
     return {
       count,
       value: value.map(
-        ({ pullRequestId, title, description, status, mergeStatus, isDraft, createdBy }) => {
+        ({ pullRequestId, title, description, status, mergeStatus, isDraft, createdBy, creationDate }) => {
           return {
             id: pullRequestId,
             title,
@@ -20,7 +20,11 @@ export class RepoPullRequestsAdapter {
             status,
             mergeStatus,
             isDraft,
-            createdBy: createdBy.uniqueName,
+            createdBy: {
+              teamMemberId: createdBy.id,
+              emailAddress: createdBy.uniqueName,
+            },
+            creationDate,
           };
         }
       ),

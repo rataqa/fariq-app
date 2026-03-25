@@ -12,14 +12,14 @@ export class MembersAdapter {
     return {
       count,
       value: value.map(
-        ({ isTeamAdmin, identity }) => {
+        ({ identity }) => {
           const { id, displayName, uniqueName, descriptor } = identity;
           return {
             id,
-            displayName,
-            uniqueName,
             descriptor,
-          } 
+            uniqueName,
+            displayName,
+          };
         }
       ),
     };

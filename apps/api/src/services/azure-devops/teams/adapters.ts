@@ -12,10 +12,11 @@ export class TeamsAdapter {
     return {
       count,
       value: value.map(
-        ({ id, name, description }) => ({
+        ({ id, name, description, projectId }) => ({
           id,
           name,
           description,
+          projectId,
         })
       ),
     };

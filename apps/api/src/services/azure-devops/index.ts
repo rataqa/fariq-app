@@ -15,6 +15,7 @@ import { ProjectsAdapter } from './projects/adapters';
 import { ReposAdapter } from './repos/adapters';
 import { RepoPullRequestsAdapter } from './repo-pull-requests/adapters';
 import { RepoStatsAdapter } from './repo-stats/adapters';
+import { IdentitiesAdapter } from './identities';
 
 export type IAzureDevOpsApi = ReturnType<typeof makeAzureDevOpsApi>;
 
@@ -63,6 +64,12 @@ export function makeAzureDevOpsApi(
       return new MembersAdapter(res.data);
     }
 
+    async function identities(identityIdCsv = '', descriptorsCsv = '') {
+      const params = identityIdCsv ? { identityIds: identityIdCsv } : { subjectDescriptors: descriptorsCsv };
+      const res = await client.get<M.IIdentities>(`/${orgRef}/_apis/identities`, { params });
+      return new IdentitiesAdapter(res.data);
+    }
+
     async function users() {
       const res = await clientVssps.get<M.IUsers>(`/${orgRef}/_apis/graph/users`);
       return new UsersAdapter(res.data);
@@ -78,13 +85,16 @@ export function makeAzureDevOpsApi(
       return new ReposAdapter(res.data);
     }
 
-    async function repoPullRequests(repoId: string, projectId = projectRef) {
-      const res = await client.get<M.IRepoPullRequests>(`/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/pullrequests`);
+    async function repoPullRequests(repoId: string, options: M.IReposSearchOptions = {}, projectId = projectRef) {
+      const params = { $top: 100, 'searchCriteria.status': 'active', ...options };
+      const path = `/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/pullrequests`;
+      const res = await client.get<M.IRepoPullRequests>(path, { params });
       return new RepoPullRequestsAdapter(res.data);
     }
 
     async function repoStats(repoId: string, projectId = projectRef) {
-      const res = await client.get<M.IRepoStats>(`/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/stats/branches`);
+      const path = `/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/stats/branches`;
+      const res = await client.get<M.IRepoStats>(path);
       return new RepoStatsAdapter(res.data);
     }
 
@@ -94,6 +104,7 @@ export function makeAzureDevOpsApi(
       teams,
       team,
       teamMembers,
+      identities,
       users,
       user,
       repos,

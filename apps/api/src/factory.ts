@@ -11,8 +11,9 @@ import { makeMyLogger } from './services/logger';
 import { makeRoutes } from './http-routes';
 
 import makeRoutesForAzureDevOpsProjects from './http-routes/projects';
+import { makeDb } from './services/db';
 
-export function factory() {
+export async function factory() {
 
   dotenv.config();
 
@@ -22,14 +23,16 @@ export function factory() {
   const config = env.config();
 
   const logger = makeMyLogger(config);
- 
+
+  const db = await makeDb(config['lowdb']);
+
   const azureDevOps = makeAzureDevOpsApi(config.azureDevOps, logger.defaultLogger);
 
   const mw = mwFactory(logger);
 
   mw.useAtStart(app);
   makeRoutes(app, config);
-  makeRoutesForAzureDevOpsProjects(app, azureDevOps);
+  makeRoutesForAzureDevOpsProjects(app, azureDevOps, db);
   mw.useAtFinish(app);
 
   return {

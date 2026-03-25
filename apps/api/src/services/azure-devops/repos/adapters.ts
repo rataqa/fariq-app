@@ -12,10 +12,11 @@ export class ReposAdapter {
     return {
       count,
       value: value.map(
-        ({ id, name, webUrl }) => ({
+        ({ id, name, webUrl, project }) => ({
           id,
           name,
           webUrl,
+          projectId: project.id,
         })
       ),
     };

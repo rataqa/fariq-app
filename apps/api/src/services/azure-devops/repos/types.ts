@@ -1,4 +1,37 @@
 export namespace Repos {
+
+  export interface ISearchOptions {
+    /**
+     * member ID
+     */
+    'searchCriteria.creatorId'?: string;
+
+    /**
+     * creationDate >= this date/time
+     */
+    'searchCriteria.minTime'?: string;
+
+    /**
+     * creationDate <= this date/time
+     */
+    'searchCriteria.maxTime'?: string;
+
+    /**
+     * 'active', 'completed'
+     */
+    'searchCriteria.status'?: string | 'active' | 'completed';
+
+    /**
+     * 100
+     */
+    $top?: number;
+
+    /**
+     * 0
+     */
+    $skip?: number;
+  }
+
   export interface Root {
     value: Value[];
     count: number;

@@ -1,3 +1,4 @@
+import { Identities } from './identities';
 import { Members } from './members/types';
 import { Projects } from './projects/types';
 import { RepoPullRequests } from './repo-pull-requests/types';
@@ -18,11 +19,14 @@ export namespace AzureDevOpsModels {
 
   export type ITeamMembers = Members.Root;
 
+  export type IIdentities = Identities.Root;
+
   export type IUsers = Users.Root;
 
   export type IUser = User.Root;
 
   export type IRepos = Repos.Root;
+  export type IReposSearchOptions = Repos.ISearchOptions;
 
   export type IRepoPullRequests = RepoPullRequests.Root;
 

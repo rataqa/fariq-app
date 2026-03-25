@@ -8,7 +8,12 @@ export namespace RepoPullRequests {
     repository            : Repository;
     pullRequestId         : number;
     codeReviewId          : number;
-    status                : string;
+
+    /**
+     * 'active', 'completed'
+     */
+    status: string;
+
     createdBy             : CreatedBy;
     creationDate          : string;
     title                 : string;

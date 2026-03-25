@@ -10,13 +10,19 @@ export namespace Members {
   }
 
   export interface Identity {
-    displayName: string;
-    url        : string;
-    _links     : Links;
     id         : string;
     uniqueName : string;
-    imageUrl   : string;
-    descriptor : string;
+    displayName: string;
+
+    /**
+     * Lookup /{organization}/_apis/identities?subjectDescriptors={CSV}
+     * Lookup /{organization}/_apis/graph/users/{descriptor} ==> mailAddress
+     */
+    descriptor: string;
+
+    _links  : Links;
+    url     : string;
+    imageUrl: string;
   }
 
   export interface Links {

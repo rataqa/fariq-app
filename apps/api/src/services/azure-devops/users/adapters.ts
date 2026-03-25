@@ -35,10 +35,10 @@ export class UserAdapter {
   adapt() {
     const { displayName, principalName, mailAddress, descriptor } = this.result;
     return {
+      descriptor,
       displayName,
       principalName,
       mailAddress,
-      descriptor,
     };
   }
 }
