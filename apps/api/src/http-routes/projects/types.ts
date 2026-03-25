@@ -23,3 +23,10 @@ export type IRequestByProjectAndRepo = Request<IRequestParamsByProjectAndRepo>;
 interface IRequestParamsByProjectAndRepo extends IRequestParamsByProject {
   repoId: string;
 }
+
+export type IRequestByProjectAndYearMonth = Request<IRequestParamsByProjectAndYearMonth>;
+
+interface IRequestParamsByProjectAndYearMonth extends IRequestParamsByProject {
+  yyyy: string;
+  mm: string;
+}

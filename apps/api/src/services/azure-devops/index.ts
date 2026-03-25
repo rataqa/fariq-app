@@ -9,7 +9,7 @@ import { base64 } from '../../utils';
 import { AzureDevOpsModels as M } from './types';
 
 import { UserAdapter, UsersAdapter } from './users/adapters';
-import { MembersAdapter } from './members/adapters';
+import { TeamMembersAdapter } from './team-members/adapters';
 import { TeamsAdapter } from './teams/adapters';
 import { ProjectsAdapter } from './projects/adapters';
 import { ReposAdapter } from './repos/adapters';
@@ -61,7 +61,7 @@ export function makeAzureDevOpsApi(
 
     async function teamMembers(projectId = projectRef, teamId: string) {
       const res = await client.get<M.ITeamMembers>(`/${orgRef}/_apis/projects/${projectId}/teams/${teamId}/members`);
-      return new MembersAdapter(res.data);
+      return new TeamMembersAdapter(res.data);
     }
 
     async function identities(identityIdCsv = '', descriptorsCsv = '') {

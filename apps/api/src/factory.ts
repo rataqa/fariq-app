@@ -32,7 +32,7 @@ export async function factory() {
 
   mw.useAtStart(app);
   makeRoutes(app, config);
-  makeRoutesForAzureDevOpsProjects(app, azureDevOps, db);
+  makeRoutesForAzureDevOpsProjects(app, azureDevOps, db, logger.defaultLogger);
   mw.useAtFinish(app);
 
   return {

@@ -1,5 +1,5 @@
 import { Identities } from './identities';
-import { Members } from './members/types';
+import { TeamMembers } from './team-members/types';
 import { Projects } from './projects/types';
 import { RepoPullRequests } from './repo-pull-requests/types';
 import { RepoStats } from './repo-stats/types';
@@ -17,7 +17,7 @@ export namespace AzureDevOpsModels {
 
   export type ITeams = Teams.Root;
 
-  export type ITeamMembers = Members.Root;
+  export type ITeamMembers = TeamMembers.Root;
 
   export type IIdentities = Identities.Root;
 

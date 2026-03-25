@@ -1,4 +1,4 @@
-export namespace Members {
+export namespace TeamMembers {
   export interface Root {
     value: Value[];
     count: number;

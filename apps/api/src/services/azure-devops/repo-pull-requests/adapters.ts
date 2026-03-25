@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { RepoPullRequests } from './types';
 
 export class RepoPullRequestsAdapter {
@@ -12,7 +13,7 @@ export class RepoPullRequestsAdapter {
     return {
       count,
       value: value.map(
-        ({ pullRequestId, title, description, status, mergeStatus, isDraft, createdBy, creationDate }) => {
+        ({ pullRequestId, title, description, status, mergeStatus, isDraft, createdBy, creationDate, closedDate }) => {
           return {
             id: pullRequestId,
             title,
@@ -20,11 +21,13 @@ export class RepoPullRequestsAdapter {
             status,
             mergeStatus,
             isDraft,
-            createdBy: {
-              teamMemberId: createdBy.id,
-              emailAddress: createdBy.uniqueName,
-            },
             creationDate,
+            createdBy: {
+              id        : createdBy.id,
+              uniqueName: createdBy.uniqueName,
+            },
+            creationDay: parseInt(format(new Date(creationDate), 'yyyyMMdd')),
+            closedDate
           };
         }
       ),

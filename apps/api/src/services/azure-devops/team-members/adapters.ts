@@ -1,8 +1,8 @@
-import { Members } from './types';
+import { TeamMembers } from './types';
 
-export class MembersAdapter {
+export class TeamMembersAdapter {
   constructor(
-    protected result: Members.Root,
+    protected result: TeamMembers.Root,
   ) {
     // do nothing
   }

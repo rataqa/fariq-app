@@ -7,11 +7,17 @@ export type IDb = Awaited<ReturnType<typeof makeDb>>;
 
 export async function makeDb(conf: IConfig['lowdb']) {
   const db = await JSONFilePreset<Db.IData>(conf.filePath, {
-    projects: [],
-    teams   : [],
-    members : [],
-    repos   : [],
+    projects    : [],
+    teams       : [],
+    members     : [],
+    repos       : [],
+    pullRequests: [],
   });
+
+  async function data() {
+    await db.read();
+    return db.data;
+  }
 
   async function addProject(row: Db.IProject) {
     await db.read();
@@ -53,11 +59,23 @@ export async function makeDb(conf: IConfig['lowdb']) {
     return !!found;
   }
 
+  async function addPullRequest(row: Db.IRepoPullRequest) {
+    await db.read();
+    const found = db.data.pullRequests.find(r => r.id === row.id);
+    if (!found) {
+      db.data.pullRequests.push(row);
+      await db.write();
+    }
+    return !!found;
+  }
+
   return {
     db,
+    data,
     addProject,
     addTeam,
     addMember,
     addRepo,
+    addPullRequest,
   };
 }

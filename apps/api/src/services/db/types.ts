@@ -6,6 +6,7 @@ export namespace Db {
     repos     : Array<IRepo>;
     //identities: Array<IIdentity>;
     //users     : Array<IUser>;
+    pullRequests: Array<IRepoPullRequest>;
   }
 
   export interface IProject {
@@ -50,4 +51,18 @@ export namespace Db {
     providerDisplayName: string;
     isActive           : boolean;
   };
+
+  export interface IRepoPullRequest {
+    repoId      : string;
+    id          : number;
+    title       : string;
+    description : string;
+    status      : string;
+    mergeStatus : string;
+    isDraft     : boolean;
+    creationDate: string;
+    createdBy   : { id: string; uniqueName: string; }
+    creationDay : number; // yyyymmdd
+    closedDate? : string;
+  }
 }

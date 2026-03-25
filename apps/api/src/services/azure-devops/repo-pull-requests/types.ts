@@ -1,37 +1,39 @@
 export namespace RepoPullRequests {
+
   export interface Root {
     value: Value[];
     count: number;
   }
 
   export interface Value {
-    repository            : Repository;
-    pullRequestId         : number;
-    codeReviewId          : number;
+    repository           : Repository;
+    pullRequestId        : number;
+    codeReviewId         : number;
 
     /**
      * 'active', 'completed'
      */
     status: string;
 
-    createdBy             : CreatedBy;
-    creationDate          : string;
-    title                 : string;
-    description           : string;
-    sourceRefName         : string;
-    targetRefName         : string;
-    mergeStatus           : string;
-    isDraft               : boolean;
-    mergeId               : string;
-    lastMergeSourceCommit : LastMergeSourceCommit;
-    lastMergeTargetCommit : LastMergeTargetCommit;
-    lastMergeCommit      ?: LastMergeCommit;
-    reviewers             : Reviewer[];
-    url                   : string;
-    completionOptions    ?: CompletionOptions;
-    supportsIterations    : boolean;
-    autoCompleteSetBy    ?: AutoCompleteSetBy;
-    labels               ?: Label[];
+    createdBy            : CreatedBy;
+    creationDate         : string;
+    closedDate?          : string;
+    title                : string;
+    description          : string;
+    sourceRefName        : string;
+    targetRefName        : string;
+    mergeStatus          : string;
+    isDraft              : boolean;
+    mergeId              : string;
+    lastMergeSourceCommit: LastMergeSourceCommit;
+    lastMergeTargetCommit: LastMergeTargetCommit;
+    lastMergeCommit      : LastMergeCommit;
+    reviewers            : Reviewer[];
+    labels               : Label[];
+    url                  : string;
+    completionOptions    : CompletionOptions;
+    supportsIterations   : boolean;
+    completionQueueTime  : string;
   }
 
   export interface Repository {
@@ -57,11 +59,11 @@ export namespace RepoPullRequests {
     uniqueName : string;
     imageUrl   : string;
     descriptor : string;
-  };
+  }
 
   export interface Links {
     avatar: Avatar;
-  };
+  }
 
   export interface Avatar {
     href: string;
@@ -85,17 +87,29 @@ export namespace RepoPullRequests {
   export interface Reviewer {
     reviewerUrl : string;
     vote        : number;
+    votedFor   ?: VotedFor[];
     hasDeclined : boolean;
-    isRequired ?: boolean;
     isFlagged   : boolean;
     displayName : string;
     url         : string;
-    _links      : Links2;
+    _links      : Links3;
     id          : string;
     uniqueName  : string;
     imageUrl    : string;
+    isRequired ?: boolean;
     isContainer?: boolean;
-    votedFor   ?: VotedFor[];
+  }
+
+  export interface VotedFor {
+    reviewerUrl: string;
+    vote       : number;
+    displayName: string;
+    url        : string;
+    _links     : Links2;
+    id         : string;
+    uniqueName : string;
+    imageUrl   : string;
+    isContainer: boolean;
   }
 
   export interface Links2 {
@@ -106,18 +120,6 @@ export namespace RepoPullRequests {
     href: string;
   }
 
-  export interface VotedFor {
-    reviewerUrl: string;
-    vote       : number;
-    displayName: string;
-    url        : string;
-    _links     : Links3;
-    id         : string;
-    uniqueName : string;
-    imageUrl   : string;
-    isContainer: boolean;
-  }
-
   export interface Links3 {
     avatar: Avatar3;
   }
@@ -126,36 +128,18 @@ export namespace RepoPullRequests {
     href: string;
   }
 
+  export interface Label {
+    id    : string;
+    name  : string;
+    active: boolean;
+  }
+
   export interface CompletionOptions {
     mergeCommitMessage         : string;
     deleteSourceBranch         : boolean;
     squashMerge                : boolean;
     mergeStrategy              : string;
     autoCompleteIgnoreConfigIds: any[];
-  }
-
-  export interface AutoCompleteSetBy {
-    displayName: string;
-    url        : string;
-    _links     : Links4;
-    id         : string;
-    uniqueName : string;
-    imageUrl   : string;
-    descriptor : string;
-  }
-
-  export interface Links4 {
-    avatar: Avatar4;
-  }
-
-  export interface Avatar4 {
-    href: string;
-  }
-
-  export interface Label {
-    id    : string;
-    name  : string;
-    active: boolean;
   }
 
 }
