@@ -1,4 +1,4 @@
-import { addDays, format, lastDayOfMonth } from "date-fns";
+import { addDays, format, lastDayOfMonth } from 'date-fns';
 
 export const base64 = {
   fromStr: (str: string) => Buffer.from(str, 'utf-8').toString('base64'),
@@ -29,7 +29,24 @@ export function makeDaysOfMonth<T = { count: number; text: string; }>(yyyy: stri
   return daysOfMonth;
 }
 
-export function isInRange(yyyyMMdd: number, days: Record<string, unknown>) {
+export function isInMonth(yyyyMMdd: number, days: Record<string, unknown>) {
   const s = String(yyyyMMdd);
   return s in days;
+}
+
+export function dateDiffInHours(d1: string, d0: string) {
+  const t1 = new Date(d1);
+  const t0 = new Date(d0);
+  const t0InSeconds = t0.getTime() / 1000;
+  const t1InSeconds = t1.getTime() / 1000;
+  return Math.round( 10.0 * (t1InSeconds - t0InSeconds) / 3600.0) / 10.0; // round to 2 decimal
+}
+
+export function deepClone<T = any>(obj: T): T {
+  if (Array.isArray(obj)) {
+    return obj.map(k => deepClone(obj[k])) as T; // pretending!
+  } else if (typeof obj === 'object') {
+    return JSON.parse(JSON.stringify(obj)) as T; // pretending!
+  }
+  return obj;
 }

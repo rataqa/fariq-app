@@ -12,6 +12,7 @@ import { makeRoutes } from './http-routes';
 
 import makeRoutesForAzureDevOpsProjects from './http-routes/projects';
 import { makeDb } from './services/db';
+import { makeDbWork } from './services/db-work';
 
 export async function factory() {
 
@@ -25,6 +26,7 @@ export async function factory() {
   const logger = makeMyLogger(config);
 
   const db = await makeDb(config['lowdb']);
+  const dbWork = await makeDbWork(config['lowdb']);
 
   const azureDevOps = makeAzureDevOpsApi(config.azureDevOps, logger.defaultLogger);
 
@@ -32,7 +34,7 @@ export async function factory() {
 
   mw.useAtStart(app);
   makeRoutes(app, config);
-  makeRoutesForAzureDevOpsProjects(app, azureDevOps, db, logger.defaultLogger);
+  makeRoutesForAzureDevOpsProjects(app, azureDevOps, db, dbWork, logger.defaultLogger);
   mw.useAtFinish(app);
 
   return {

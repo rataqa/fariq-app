@@ -141,3 +141,4 @@ vite.config.ts.timestamp-*
 .turbo
 
 /db.json
+/db-work.json

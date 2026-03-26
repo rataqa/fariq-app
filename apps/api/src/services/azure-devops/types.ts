@@ -6,6 +6,7 @@ import { RepoStats } from './repo-stats/types';
 import { Repos } from './repos/types';
 import { Teams } from './teams/types';
 import { User, Users } from './users/types';
+import { WorkItems } from './work-items';
 
 export namespace AzureDevOpsModels {
   export interface IList<TRow> {
@@ -31,4 +32,6 @@ export namespace AzureDevOpsModels {
   export type IRepoPullRequests = RepoPullRequests.Root;
 
   export type IRepoStats = RepoStats.Root;
+
+  export type IWorkItems = WorkItems.Root;
 }

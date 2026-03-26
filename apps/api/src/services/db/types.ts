@@ -65,4 +65,24 @@ export namespace Db {
     creationDay : number; // yyyymmdd
     closedDate? : string;
   }
+
+  export interface IWorkItem {
+    id: number
+    title      : string;
+    itemType   : string;
+    state      : string;
+    effort     : number;
+    createdDate: string;
+    createdBy  : {
+      id        : string;
+      uniqueName: string;
+    };
+  }
 }
+
+export interface IPullRequestStats {
+  count: number;
+  text: string;
+}
+
+export type IPullRequestStatsByDay = Record<string, IPullRequestStats>;

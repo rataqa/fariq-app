@@ -3,14 +3,17 @@ import { Application, Request } from 'express';
 
 import { IAzureDevOpsApi } from '../../services/azure-devops';
 import { IDb } from '../../services/db';
-import { isInRange, makeDaysOfMonth, waitForMs } from '../../utils';
+import { IDbWork } from '../../services/db-work';
+import { makeDaysOfMonth, waitForMs } from '../../utils';
 import { IResponse } from '../types';
-import { IRequestByMember, IRequestByProject, IRequestByProjectAndYearMonth, IRequestByProjectAndRepo, IRequestByProjectAndTeam } from './types';
+import * as Types from './types';
+import { IPullRequestStats } from '../../services/db/types';
 
 export default function makeRoutes(
   app: Application,
   azureDevOps: IAzureDevOpsApi,
   db: IDb,
+  dbWork: IDbWork,
   logger: IBasicLogger,
 ) {
 
@@ -25,14 +28,14 @@ export default function makeRoutes(
     }
   }
 
-  async function getProject(req: IRequestByProject, res: IResponse) {
+  async function getProject(req: Types.IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
     const result = await api.project(projectId);
     res.json(result);
   }
 
-  async function getTeams(req: IRequestByProject, res: IResponse) {
+  async function getTeams(req: Types.IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
     const result = await api.teams(projectId);
@@ -44,14 +47,14 @@ export default function makeRoutes(
     }
   }
 
-  async function getTeam(req: IRequestByProjectAndTeam, res: IResponse) {
+  async function getTeam(req: Types.IRequestByProjectAndTeam, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
     const result = await api.team(projectId, teamId);
     res.json(result);
   }
 
-  async function getTeamMembers(req: IRequestByProjectAndTeam, res: IResponse) {
+  async function getTeamMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
     const result = await api.teamMembers(projectId, teamId);
@@ -63,7 +66,7 @@ export default function makeRoutes(
     }
   }
 
-  async function getAllTeamMembers(req: IRequestByProjectAndTeam, res: IResponse) {
+  async function getAllTeamMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
     const teams = await api.teams(projectId);
@@ -100,14 +103,14 @@ export default function makeRoutes(
     res.json(result.adapt());
   }
 
-  async function getUser(req: IRequestByMember, res: IResponse) {
+  async function getUser(req: Types.IRequestByMember, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { userDescriptor } = req.params;
     const result = await api.user(userDescriptor);
     res.json(result);
   }
 
-  async function getRepos(req: IRequestByProject, res: IResponse) {
+  async function getRepos(req: Types.IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
     const result = await api.repos(projectId);
@@ -119,7 +122,7 @@ export default function makeRoutes(
     }
   }
 
-  async function getRepoPullRequests(req: IRequestByProjectAndRepo, res: IResponse) {
+  async function getRepoPullRequests(req: Types.IRequestByProjectAndRepo, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, repoId } = req.params;
     const $top = Number.parseInt(String(req.query['$top']) || '100');
@@ -132,23 +135,30 @@ export default function makeRoutes(
     res.json(result.adapt());
   }
 
-  async function getRepoStats(req: IRequestByProjectAndRepo, res: IResponse) {
+  async function getRepoStats(req: Types.IRequestByProjectAndRepo, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, repoId } = req.params;
     const result = await api.repoStats(repoId, projectId);
     res.json(result.adapt());
   }
 
-  async function getAllPullRequestsByMonth(req: IRequestByProjectAndYearMonth, res: IResponse) {
+  async function syncAllPullRequestsByMonth(req: Types.IRequestByProjectAndYearMonth, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, yyyy = '2026', mm = '03' } = req.params;
-    const { projects, repos, members } = await db.data();
+    const { projects, repos } = await db.data();
     const project = projects.find(p => p.id === projectId);
     res.json(project);
 
+    const currentYear = new Date().getFullYear();
+    const year = parseInt(yyyy);
+    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
+      logger.warn('invalid year', { yyyy });
+      return;
+    }
+
     const month = parseInt(mm);
-    if (isNaN(month)) {
-      logger
+    if (isNaN(month) || (month <= 0) || (12 < month)) {
+      logger.warn('invalid month', { mm });
       return;
     }
 
@@ -201,45 +211,61 @@ export default function makeRoutes(
     logger.info('DONE!');
   }
 
-  async function getRepoPrStatsByMonth(req: IRequestByProjectAndYearMonth, res: IResponse) {
+  async function getRepoPrStatsByMonth(req: Types.IRequestByProjectAndYearMonth, res: IResponse) {
     const { projectId, yyyy, mm } = req.params;
-    const { repos, pullRequests } = await db.data();
 
-    const result: any = {};
+    const currentYear = new Date().getFullYear();
+    const year = parseInt(yyyy);
+    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
+      logger.warn('invalid year', { yyyy });
+      return res.json({ error: 'invalid year', yyyy });
+    }
 
-    const repoToProject: Record<string, string> = {};
-    repos.forEach(r => { repoToProject[r.id] = r.projectId });
-    const projectOfRepo = (rid: string) => repoToProject[rid] || '';
+    const month = parseInt(mm);
+    if (isNaN(month) || (month <= 0) || (12 < month)) {
+      logger.warn('invalid month', { mm });
+      return res.json({ error: 'invalid month', mm });
+    }
 
     const daysOfMonth = makeDaysOfMonth<{ count: number; text: string; }>(yyyy, mm, { count: 0, text: '' });
+    const prList = await db.pullRequestsInReposOfProjectAndMonth(projectId, daysOfMonth);
+    const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
+    res.json(stats);
+  }
 
-    let totalPullRequests = 0;
-    let totalClosedPullRequests = 0;
-    let totalDeltaToCloseInHrs = 0.0;
+  async function getRepoPrStatsByMonthByMember(req: Types.IRequestByProjectAndYearMonthMember, res: IResponse) {
+    const { projectId, memberId, yyyy, mm } = req.params;
 
-    pullRequests
-      .filter(pr => (isInRange(pr.creationDay, daysOfMonth) && projectOfRepo(pr.repoId) === projectId)) 
-        // String(pr.creationDay).startsWith(`${yyyy}${mm}`))
-      //.map(pr => ({ ...pr, creationDay: String(pr.creationDay) }))
-      .forEach(pr => {
-        const mid = pr.createdBy.uniqueName;
-        const day = String(pr.creationDay);
-        if (!(mid in result)) result[mid] = {}; // ...daysOfMonth };
-        if (!(day in result[mid])) result[mid][day] = { count: 0, text: '' };
-        result[mid][day].count += 1;
-        result[mid][day].text += pr.title + '\n';
-        totalPullRequests++;
-        if (pr.closedDate) {
-          totalClosedPullRequests++;
-          const t0 = new Date(pr.creationDate);
-          const t1 = new Date(pr.closedDate);
-          const deltaInHrs = (t1.getTime() / 1000.0 - t0.getTime() / 1000.0) / 60.0 / 60.0;
-          totalDeltaToCloseInHrs += deltaInHrs;
-        }
-      });
+    const currentYear = new Date().getFullYear();
+    const year = parseInt(yyyy);
+    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
+      logger.warn('invalid year', { yyyy });
+      return res.json({ error: 'invalid year', yyyy });
+    }
 
-    const avgTimeToCloseInHrs = totalDeltaToCloseInHrs / totalClosedPullRequests;
-    res.json({ data: result, meta: { totalPullRequests, totalClosedPullRequests, avgTimeToCloseInHrs }});
+    const month = parseInt(mm);
+    if (isNaN(month) || (month <= 0) || (12 < month)) {
+      logger.warn('invalid month', { mm });
+      return res.json({ error: 'invalid month', mm });
+    }
+
+    const daysOfMonth = makeDaysOfMonth<IPullRequestStats>(yyyy, mm, { count: 0, text: '' });
+    const prList = await db.pullRequestsInReposOfProjectAndMonthByMember(projectId, daysOfMonth, memberId);
+    const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
+    res.json(stats);
+  }
+
+  async function syncWorkItems(req: Types.IRequestByProjectAndYearMonthDay, res: IResponse) {
+    const api = azureDevOps.makeOrgApi();
+    const { projectId } = req.params;
+    const asOf = new Date(String(req.query.asOf || '')).toISOString();
+    const result = await api.workItems(asOf, projectId);
+    const adapted = result.adapt();
+    res.json(adapted);
+
+    for (const row of adapted.value) {
+      await dbWork.addWorkItem({ projectId, ...row }); // cache
+    }
   }
 
   app.get('/projects', getProjects);
@@ -251,9 +277,12 @@ export default function makeRoutes(
   app.get('/projects/:projectId/repos', getRepos);
   app.get('/projects/:projectId/repos/:repoId/pull-requests', getRepoPullRequests);
   app.get('/projects/:projectId/repos/:repoId/stats', getRepoStats);
-  app.get('/projects/:projectId/all-pull-requests/:yyyy/:mm', getAllPullRequestsByMonth);
+  app.get('/projects/:projectId/sync-pull-requests/:yyyy/:mm', syncAllPullRequestsByMonth);
   app.get('/projects/:projectId/pull-request-stats/:yyyy/:mm', getRepoPrStatsByMonth);
+  app.get('/projects/:projectId/members/:memberId/pull-request-stats/:yyyy/:mm', getRepoPrStatsByMonthByMember);
 
+  app.get('/projects/:projectId/work-items', syncWorkItems);
+  
   app.get('/identities', getIdentities);
   app.get('/users', getUsers);
   app.get('/users/:userDescriptor', getUser);

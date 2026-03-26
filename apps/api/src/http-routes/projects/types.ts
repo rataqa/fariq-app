@@ -30,3 +30,19 @@ interface IRequestParamsByProjectAndYearMonth extends IRequestParamsByProject {
   yyyy: string;
   mm: string;
 }
+
+export type IRequestByProjectAndYearMonthMember = Request<IRequestParamsByProjectAndYearMonthMember>;
+
+interface IRequestParamsByProjectAndYearMonthMember extends IRequestParamsByProject {
+  memberId: string;
+  yyyy: string;
+  mm: string;
+}
+
+export type IRequestByProjectAndYearMonthDay = Request<IRequestParamsByProjectAndYearMonthDay>;
+
+interface IRequestParamsByProjectAndYearMonthDay extends IRequestParamsByProject {
+  yyyy: string;
+  mm: string;
+  dd: string;
+}

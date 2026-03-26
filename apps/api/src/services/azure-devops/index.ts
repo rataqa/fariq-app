@@ -16,6 +16,7 @@ import { ReposAdapter } from './repos/adapters';
 import { RepoPullRequestsAdapter } from './repo-pull-requests/adapters';
 import { RepoStatsAdapter } from './repo-stats/adapters';
 import { IdentitiesAdapter } from './identities';
+import { WorkItemsAdapter } from './work-items';
 
 export type IAzureDevOpsApi = ReturnType<typeof makeAzureDevOpsApi>;
 
@@ -98,6 +99,20 @@ export function makeAzureDevOpsApi(
       return new RepoStatsAdapter(res.data);
     }
 
+    async function workItems(asOf: string, projectId = projectRef) {
+      const fields = [
+        'System.Title',
+        'System.WorkItemType',
+        'System.State',
+        'System.CreatedDate',
+        'System.CreatedBy',
+      ].join(',');
+      const params = { fields, asOf };
+      const path = `/${orgRef}/${projectId}/_apis/wit/workitems`;
+      const res = await client.get<M.IWorkItems>(path, { params });
+      return new WorkItemsAdapter(res.data);
+    }
+
     return {
       projects,
       project,
@@ -110,6 +125,7 @@ export function makeAzureDevOpsApi(
       repos,
       repoPullRequests,
       repoStats,
+      workItems,
     };
   }
 
