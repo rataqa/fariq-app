@@ -1,94 +1,109 @@
-import { JSONFilePreset } from 'lowdb/node';
-
-import { IConfig } from '../env-settings/types';
 import { Db, IPullRequestStatsByDay } from './types';
-import { dateDiffInHours, deepClone, isInMonth } from '../../utils';
+import { dateDiffInHours, deepClone } from '../../utils';
+import { PrismaClient } from '../../generated/prisma/client';
 
-export type IDb = Awaited<ReturnType<typeof makeDb>>;
+export type IDb = ReturnType<typeof makeDb>;
 
-export async function makeDb(conf: IConfig['lowdb']) {
-  const db = await JSONFilePreset<Db.IData>(conf.coreFilePath, {
-    projects    : [],
-    teams       : [],
-    members     : [],
-    repos       : [],
-    pullRequests: [],
-  });
+export function makeDb(db: PrismaClient) {
 
-  async function data() {
-    await db.read();
-    return db.data;
-  }
-
-  async function addProject(row: Db.IProject) {
-    await db.read();
-    const found = db.data.projects.find(r => r.id === row.id);
+  async function upsertProject(data: Db.IProject) {
+    const found = await db.project.findUnique({ where: { id: data.id }});
     if (!found) {
-      db.data.projects.push(row);
-      await db.write();
+      await db.project.create({ data });
     }
     return !!found;
   }
 
-  async function addTeam(row: Db.ITeam) {
-    await db.read();
-    const found = db.data.teams.find(r => r.id === row.id);
+  async function findProjects() {
+    return db.project.findMany();
+  }
+
+  async function findProject(id: string) {
+    return db.project.findUnique({ where: { id }});
+  }
+
+  async function upsertTeam(data: Db.ITeam) {
+    const found = db.team.findUnique({ where: { id: data.id }});
     if (!found) {
-      db.data.teams.push(row);
-      await db.write();
+      await db.team.create({ data });
     }
     return !!found;
   }
 
-  async function addMember(row: Db.IMember) {
-    await db.read();
-    const found = db.data.members.find(r => r.id === row.id);
+  async function findTeamsByProject(projectId: string ) {
+    return db.team.findMany({ where: { projectId }});
+  }
+
+  async function upsertMember(data: Db.IMember) {
+    const found = db.member.findUnique({ where: { id: data.id }});
     if (!found) {
-      db.data.members.push(row);
-      await db.write();
+      await db.member.create({ data });
     }
     return !!found;
   }
 
-  async function addRepo(row: Db.IRepo) {
-    await db.read();
-    const found = db.data.repos.find(r => r.id === row.id);
+  async function findMembersByProject(projectId: string ) {
+    const teams = await findTeamsByProject(projectId);
+    const teamIdList = teams.map(t => t.id);
+    return db.member.findMany({ where: { teamId: { in: teamIdList }}});
+  }
+
+  async function findMembersByTeam(teamId: string ) {
+    return db.member.findMany({ where: { teamId }});
+  }
+
+  async function upsertRepo(data: Db.IRepo) {
+    const found = db.repo.findUnique({ where: { id: data.id }});
     if (!found) {
-      db.data.repos.push(row);
-      await db.write();
+      await db.repo.create({ data });
     }
     return !!found;
   }
 
-  async function addPullRequest(row: Db.IRepoPullRequest) {
-    await db.read();
-    const found = db.data.pullRequests.find(r => r.id === row.id);
+  async function findReposByProject(projectId: string ) {
+    return db.repo.findMany({ where: { projectId }});
+  }
+
+  async function upsertPullRequest(data: Db.IRepoPullRequest) {
+    const found = db.repoPullRequest.findUnique({ where: { id: data.id }});
     if (!found) {
-      db.data.pullRequests.push(row);
-      await db.write();
+      await db.repoPullRequest.create({ data });
     }
     return !!found;
   }
 
   async function pullRequestsInReposOfProject(projectId: string) {
-    await db.read();
-    const { repos, pullRequests } = db.data;
-
-    const repoToProject: Record<string, string> = {};
-    repos.forEach(r => { repoToProject[r.id] = r.projectId });
-    const projectOfRepo = (rid: string) => repoToProject[rid] || '';
-
-    return pullRequests.filter(pr => projectOfRepo(pr.repoId) === projectId);
+    const repos = await db.repo.findMany({ where: { projectId }});
+    const repoIdList = repos.map(r => r.id);
+    const pullRequests = await db.repoPullRequest.findMany({
+      where: { repoId: { in: repoIdList }}
+    });
+    return pullRequests;
   }
 
-  async function pullRequestsInReposOfProjectAndMonth(projectId: string, daysOfMonth: Record<string, unknown>) {
-    const prList = await pullRequestsInReposOfProject(projectId);
-    return prList.filter(pr => isInMonth(pr.creationDay, daysOfMonth));
+  async function pullRequestsInReposOfProjectAndMonth(projectId: string, dayList: number[]) {
+    const repos = await db.repo.findMany({ where: { projectId }});
+    const repoIdList = repos.map(r => r.id);
+    const pullRequests = await db.repoPullRequest.findMany({
+      where: {
+        repoId: { in: repoIdList },
+        creationDay: { in: dayList },
+      },
+    });
+    return pullRequests;
   }
 
-  async function pullRequestsInReposOfProjectAndMonthByMember(projectId: string, daysOfMonth: Record<string, unknown>, memberId: string) {
-    const prList = await pullRequestsInReposOfProjectAndMonth(projectId, daysOfMonth);
-    return prList.filter(pr => pr?.createdBy?.id === memberId);
+  async function pullRequestsInReposOfProjectAndMonthByMember(projectId: string, dayList: number[], memberId: string) {
+    const repos = await db.repo.findMany({ where: { projectId }});
+    const repoIdList = repos.map(r => r.id);
+    const pullRequests = await db.repoPullRequest.findMany({
+      where: {
+        repoId: { in: repoIdList },
+        creationDay: { in: dayList },
+        createdById: memberId,
+      },
+    });
+    return pullRequests;
   }
 
   function pullRequestsStatsGroupedByMembers(prList: Db.IRepoPullRequest[], daysOfMonth: IPullRequestStatsByDay) {
@@ -99,7 +114,7 @@ export async function makeDb(conf: IConfig['lowdb']) {
     let totalDeltaToCloseInHrs = 0.0;
 
     prList.forEach(pr => {
-        const email = pr.createdBy.uniqueName;
+        const email = pr.createdByUniqueName;
         const day = String(pr.creationDay);
         if (!(email in data)) data[email] = deepClone(daysOfMonth);
         if (!(day in data[email])) data[email][day] = { count: 0, text: '' };
@@ -127,12 +142,21 @@ export async function makeDb(conf: IConfig['lowdb']) {
 
   return {
     db,
-    data,
-    addProject,
-    addTeam,
-    addMember,
-    addRepo,
-    addPullRequest,
+    upsertProject,
+    findProject,
+    findProjects,
+
+    upsertTeam,
+    findTeamsByProject,
+
+    upsertMember,
+    findMembersByProject,
+    findMembersByTeam,
+
+    upsertRepo,
+    findReposByProject,
+
+    upsertPullRequest,
     pullRequestsInReposOfProject,
     pullRequestsInReposOfProjectAndMonth,
     pullRequestsInReposOfProjectAndMonthByMember,

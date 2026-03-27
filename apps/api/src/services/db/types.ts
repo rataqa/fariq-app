@@ -16,67 +16,52 @@ export namespace Db {
   }
 
   export interface ITeam {
+    projectId  : string;
     id         : string;
     name       : string;
     description: string;
-    projectId  : string;
   }
 
   export interface IRepo {
+    projectId: string;
     id       : string;
     name     : string;
     webUrl   : string;
-    projectId: string;
   }
 
   export interface IMember {
+    teamId     : string;
     id         : string;
     descriptor : string;
     uniqueName : string;
     displayName: string;
-    teamId     : string;
   }
-
-  export interface IIdentity {
-    id                 : string;
-    descriptor         : string;
-    subjectDescriptor  : string;
-    providerDisplayName: string;
-    isActive           : boolean;
-  }
-
-  export interface IUser {
-    descriptor         : string;
-    subjectDescriptor  : string;
-    providerDisplayName: string;
-    isActive           : boolean;
-  };
 
   export interface IRepoPullRequest {
-    repoId      : string;
-    id          : number;
-    title       : string;
-    description : string;
-    status      : string;
-    mergeStatus : string;
-    isDraft     : boolean;
-    creationDate: string;
-    createdBy   : { id: string; uniqueName: string; }
-    creationDay : number; // yyyymmdd
-    closedDate? : string;
+    repoId             : string;
+    id                 : number;
+    title              : string;
+    description        : string;
+    status             : string;
+    mergeStatus        : string;
+    isDraft            : boolean;
+    creationDate       : string;
+    createdById        : string;
+    createdByUniqueName: string;
+    creationDay        : number;   // yyyymmdd
+    closedDate         : string | null;
   }
 
   export interface IWorkItem {
-    id: number
-    title      : string;
-    itemType   : string;
-    state      : string;
-    effort     : number;
-    createdDate: string;
-    createdBy  : {
-      id        : string;
-      uniqueName: string;
-    };
+    projectId          : string;
+    id                 : number;
+    title              : string;
+    itemType           : string;
+    state              : string;
+    effort             : number;
+    createdDate        : string;
+    createdById        : string;
+    createdByUniqueName: string;
   }
 }
 

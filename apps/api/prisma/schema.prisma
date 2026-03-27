@@ -1,0 +1,109 @@
+// Prisma schema file
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  //url      = env("DATABASE_URL")
+}
+
+model Project {
+  id          String @id @db.Uuid
+  name        String
+  description String
+
+  // relationships
+  teams       Team[]
+  repos       Repo[]
+}
+
+model Team {
+  id          String @id @db.Uuid
+  name        String
+  description String
+  projectId   String @db.Uuid
+
+  // relationships
+  project     Project @relation(fields: [projectId], references: [id])
+  members     Member[]
+
+  // indexes
+  @@index([projectId])
+}
+
+model Repo {
+  id        String @id @db.Uuid
+  name      String
+  webUrl    String
+  projectId String @db.Uuid
+
+  // relationships
+  project      Project @relation(fields: [projectId], references: [id])
+  pullRequests RepoPullRequest[]
+
+  // indexes
+  @@index([projectId])
+}
+
+model Member {
+  id          String @id @db.Uuid
+  descriptor  String @unique
+  uniqueName  String @unique
+  displayName String
+  teamId      String @db.Uuid
+
+  // relationships
+  team         Team @relation(fields: [teamId], references: [id])
+  pullRequests RepoPullRequest[]
+
+  // indexes
+  @@index([teamId])
+}
+
+model RepoPullRequest {
+  id                  Int @id
+  title               String
+  description         String
+  status              String
+  mergeStatus         String
+  isDraft             Boolean
+  creationDate        String
+  closedDate          String?
+
+  // artificial fields
+  creationDay         Int
+  createdById         String @db.Uuid
+  createdByUniqueName String
+  repoId              String @db.Uuid
+
+  // relationships
+  repo                Repo @relation(fields: [repoId], references: [id])
+  createdBy           Member @relation(fields: [createdById], references: [id])
+
+  // indexes
+  @@index([creationDay])
+  @@index([createdById])
+  @@index([createdByUniqueName])
+  @@index([repoId])
+}
+
+// API does not work yet
+// model WorkItem {
+//   id                 Int @id
+//   title              String
+//   itemType           String
+//   state              String
+//   createdDate        String
+
+//   // artificial fields
+//   createdById        String
+//   cretedByUniqueName String
+//   projectId          String
+
+//   // relationships
+//   project            Project @relation(fields: [projectId], references: [id])
+//   createdByMember    Member @relation(fields: [createdById], references: [id])
+// }

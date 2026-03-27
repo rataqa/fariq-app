@@ -3,7 +3,6 @@ import { Application, Request } from 'express';
 
 import { IAzureDevOpsApi } from '../../services/azure-devops';
 import { IDb } from '../../services/db';
-import { IDbWork } from '../../services/db-work';
 import { makeDaysOfMonth, waitForMs } from '../../utils';
 import { IResponse } from '../types';
 import * as Types from './types';
@@ -13,18 +12,23 @@ export default function makeRoutes(
   app: Application,
   azureDevOps: IAzureDevOpsApi,
   db: IDb,
-  dbWork: IDbWork,
   logger: IBasicLogger,
 ) {
 
-  async function getProjects(_req: Request, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
-    const result = await api.projects();
-    const adapted = result.adapt();
-    res.json(adapted);
+  async function getProjects(req: Request, res: IResponse) {
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const result = await api.projects();
+      const adapted = result.adapt();
+      res.json(adapted);
 
-    for (const row of adapted.value) {
-      await db.addProject(row); // cache
+      for (const row of adapted.value) {
+        await db.upsertProject(row); // cache
+      }
+    } else {
+      const value = await db.findProjects();
+      res.json({ value, count: value.length });
     }
   }
 
@@ -36,14 +40,20 @@ export default function makeRoutes(
   }
 
   async function getTeams(req: Types.IRequestByProject, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
-    const result = await api.teams(projectId);
-    const adapted = result.adapt();
-    res.json(adapted);
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const result = await api.teams(projectId);
+      const adapted = result.adapt();
+      res.json(adapted);
 
-    for (const row of adapted.value) {
-      await db.addTeam(row); // cache
+      for (const row of adapted.value) {
+        await db.upsertTeam(row); // cache
+      }
+    } else {
+      const value = await db.findTeamsByProject(projectId);
+      res.json({ value, count: value.length });
     }
   }
 
@@ -55,14 +65,20 @@ export default function makeRoutes(
   }
 
   async function getTeamMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
-    const result = await api.teamMembers(projectId, teamId);
-    const adapted = result.adapt();
-    res.json(adapted);
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const result = await api.teamMembers(projectId, teamId);
+      const adapted = result.adapt();
+      res.json(adapted);
 
-    for (const row of adapted.value) {
-      await db.addMember({ teamId, ...row }); // cache
+      for (const row of adapted.value) {
+        await db.upsertMember({ teamId, ...row }); // cache
+      }
+    } else {
+      const value = await db.findMembersByTeam(teamId);
+      res.json({ value, count: value.length });
     }
   }
 
@@ -74,7 +90,7 @@ export default function makeRoutes(
     const result: any = [];
 
     for (const team of teams.adapt().value) {
-      await db.addTeam(team); // cache
+      await db.upsertTeam(team); // cache
 
       const members = await api.teamMembers(projectId, team.id);
       const adaptedMembers = members.adapt();
@@ -85,30 +101,30 @@ export default function makeRoutes(
       });
 
       for (const member of adaptedMembers.value) {
-        await db.addMember({ teamId: team.id, ...member });
+        await db.upsertMember({ teamId: team.id, ...member });
       }
     }
     res.json(result);
   }
 
-  async function getIdentities(_req: Request, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
-    const result = await api.identities();
-    res.json(result.adapt());
-  }
+  // async function getIdentities(_req: Request, res: IResponse) {
+  //   const api = azureDevOps.makeOrgApi();
+  //   const result = await api.identities();
+  //   res.json(result.adapt());
+  // }
 
-  async function getUsers(_req: Request, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
-    const result = await api.users();
-    res.json(result.adapt());
-  }
+  // async function getUsers(_req: Request, res: IResponse) {
+  //   const api = azureDevOps.makeOrgApi();
+  //   const result = await api.users();
+  //   res.json(result.adapt());
+  // }
 
-  async function getUser(req: Types.IRequestByMember, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
-    const { userDescriptor } = req.params;
-    const result = await api.user(userDescriptor);
-    res.json(result);
-  }
+  // async function getUser(req: Types.IRequestByMember, res: IResponse) {
+  //   const api = azureDevOps.makeOrgApi();
+  //   const { userDescriptor } = req.params;
+  //   const result = await api.user(userDescriptor);
+  //   res.json(result);
+  // }
 
   async function getRepos(req: Types.IRequestByProject, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
@@ -118,7 +134,7 @@ export default function makeRoutes(
     res.json(adapted);
 
     for (const row of adapted.value) {
-      await db.addRepo(row); // cache
+      await db.upsertRepo(row); // cache
     }
   }
 
@@ -145,9 +161,11 @@ export default function makeRoutes(
   async function syncAllPullRequestsByMonth(req: Types.IRequestByProjectAndYearMonth, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
     const { projectId, yyyy = '2026', mm = '03' } = req.params;
-    const { projects, repos } = await db.data();
-    const project = projects.find(p => p.id === projectId);
+    const project = await db.findProject(projectId);
     res.json(project);
+    if (!project) return;
+    
+    const repos = await db.findReposByProject(projectId);
 
     const currentYear = new Date().getFullYear();
     const year = parseInt(yyyy);
@@ -182,8 +200,8 @@ export default function makeRoutes(
         logger.info(' > found', { count: adapted.count });
         for (const pr of adapted.value) {
           //logger.info('PR', { repo: repo.name, member: member.uniqueName, pr: pr.id });
-          logger.info('PR', { repo: repo.name, member: pr.createdBy.uniqueName, pr: pr.id });
-          await db.addPullRequest({ repoId: repo.id, ...pr });
+          logger.info('PR', { repo: repo.name, member: pr.createdByUniqueName, pr: pr.id });
+          await db.upsertPullRequest({ repoId: repo.id, ...pr });
         }
         await waitForMs(100);
 
@@ -200,8 +218,8 @@ export default function makeRoutes(
         logger.info(' > found', { count: adapted2.count });
         for (const pr of adapted2.value) {
           //logger.info('PR', { repo: repo.name, member: member.uniqueName, pr: pr.id });
-          logger.info('PR', { repo: repo.name, member: pr.createdBy.uniqueName, pr: pr.id });
-          await db.addPullRequest({ repoId: repo.id, ...pr });
+          logger.info('PR', { repo: repo.name, member: pr.createdByUniqueName, pr: pr.id });
+          await db.upsertPullRequest({ repoId: repo.id, ...pr });
         }
         await waitForMs(100);
         //break; // do it once for testing
@@ -228,7 +246,8 @@ export default function makeRoutes(
     }
 
     const daysOfMonth = makeDaysOfMonth<{ count: number; text: string; }>(yyyy, mm, { count: 0, text: '' });
-    const prList = await db.pullRequestsInReposOfProjectAndMonth(projectId, daysOfMonth);
+    const dayList = Object.keys(daysOfMonth).map(parseInt);
+    const prList = await db.pullRequestsInReposOfProjectAndMonth(projectId, dayList);
     const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
     res.json(stats);
   }
@@ -250,7 +269,8 @@ export default function makeRoutes(
     }
 
     const daysOfMonth = makeDaysOfMonth<IPullRequestStats>(yyyy, mm, { count: 0, text: '' });
-    const prList = await db.pullRequestsInReposOfProjectAndMonthByMember(projectId, daysOfMonth, memberId);
+    const dayList = Object.keys(daysOfMonth).map(parseInt);
+    const prList = await db.pullRequestsInReposOfProjectAndMonthByMember(projectId, dayList, memberId);
     const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
     res.json(stats);
   }
@@ -263,9 +283,10 @@ export default function makeRoutes(
     const adapted = result.adapt();
     res.json(adapted);
 
-    for (const row of adapted.value) {
-      await dbWork.addWorkItem({ projectId, ...row }); // cache
-    }
+    // TODO: implement
+    // for (const row of adapted.value) {
+    //   await db.upsertWorkItem({ projectId, ...row }); // cache
+    // }
   }
 
   app.get('/projects', getProjects);
@@ -283,9 +304,9 @@ export default function makeRoutes(
 
   app.get('/projects/:projectId/work-items', syncWorkItems);
   
-  app.get('/identities', getIdentities);
-  app.get('/users', getUsers);
-  app.get('/users/:userDescriptor', getUser);
+  // app.get('/identities', getIdentities);
+  // app.get('/users', getUsers);
+  // app.get('/users/:userDescriptor', getUser);
 
   return {
     getProjects,
@@ -297,8 +318,8 @@ export default function makeRoutes(
     getRepos,
     getRepoPullRequests,
     getRepoStats,
-    getUsers,
-    getUser,
-    getIdentities,
+    // getUsers,
+    // getUser,
+    // getIdentities,
   };
 }

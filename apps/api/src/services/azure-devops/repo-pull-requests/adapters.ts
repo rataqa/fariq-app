@@ -22,12 +22,10 @@ export class RepoPullRequestsAdapter {
             mergeStatus,
             isDraft,
             creationDate,
-            createdBy: {
-              id        : createdBy.id,
-              uniqueName: createdBy.uniqueName,
-            },
-            creationDay: parseInt(format(new Date(creationDate), 'yyyyMMdd')),
-            closedDate
+            createdById        : createdBy.id,
+            createdByUniqueName: createdBy.uniqueName,
+            creationDay        : parseInt(format(new Date(creationDate), 'yyyyMMdd')),
+            closedDate         : closedDate || null,
           };
         }
       ),

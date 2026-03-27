@@ -2,15 +2,20 @@
   "name": "@fariq/api",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start:ts": "ts-node src/index.ts",
-    "start": "node dist/index.js",
+    "start:tsx": "tsx src/index.ts",
+    "start": "node .",
     "type-check": "tsc --noEmit",
     "clean": "rm -rf dist"
   },
   "dependencies": {
     "@fariq/shared": "*",
+    "@prisma/adapter-pg": "^7.5.0",
+    "@prisma/client": "^7.5.0",
     "@rataqa/amir": "^1.0.3",
     "@rataqa/jalb": "^1.0.4",
     "@rataqa/muhit": "^1.0.2",
@@ -22,12 +27,15 @@
     "date-fns": "^4.1.0",
     "dotenv": "^17.3.1",
     "express": "^4.21.2",
-    "lowdb": "^7.0.1"
+    "pg": "^8.20.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.10.5",
+    "@types/pg": "^8.20.0",
+    "prisma": "^7.5.0",
+    "tsx": "^4.21.0",
     "typescript": "*"
   }
 }

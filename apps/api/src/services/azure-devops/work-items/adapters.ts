@@ -14,14 +14,12 @@ export class WorkItemsAdapter {
       value: value.map(
         ({ id, fields: f }) => ({
           id,
-          title      : f['System.Title'],
-          itemType   : f['System.WorkItemType'],
-          state      : f['System.State'],
-          createdDate: f['System.CreatedDate'],
-          createdBy  : {
-            id        : f['System.CreatedBy'].id,
-            uniqueName: f['System.CreatedBy'].uniqueName,
-          },
+          title              : f['System.Title'],
+          itemType           : f['System.WorkItemType'],
+          state              : f['System.State'],
+          createdDate        : f['System.CreatedDate'],
+          createdById        : f['System.CreatedBy'].id,
+          createdByUniqueName: f['System.CreatedBy'].uniqueName,
         }),
       ),
     };
