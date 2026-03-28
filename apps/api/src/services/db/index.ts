@@ -60,22 +60,26 @@ export function makeDb(db: PrismaClient, logger: IBasicLogger) {
     let found = await db.repo.findUnique({ where: { id: data.id }});
     if (!found) {
       found = await db.repo.create({ data });
-      logger.info('new repo', { name: data.name });
+      logger.info(' + new repo', { name: data.name });
     }
     return found;
+  }
+
+  async function findRepo(repoId: string ) {
+    return db.repo.findUnique({ where: { id: repoId }});
   }
 
   async function findReposByProject(projectId: string ) {
     return db.repo.findMany({ where: { projectId }});
   }
 
-  async function upsertPullRequest(data: Db.IPullRequest, repoName = '') {
+  async function upsertPullRequest(data: Db.IPullRequest, repoName = '', updateWhenFound = false) {
     let found = await db.pullRequest.findUnique({ where: { id: data.id }});
     if (!found) {
       logger.info('  + insert PR', { repo: repoName, id: data.id, title: data.title });
       found = await db.pullRequest.create({ data });
       //logger.info('new PR', { id: data.id, title: data.title });
-    } else {
+    } else if (updateWhenFound) {
       logger.info('  * update PR', { repo: repoName, id: data.id, title: data.title });
       const change = {
         isDraft: data.isDraft,
@@ -175,6 +179,7 @@ export function makeDb(db: PrismaClient, logger: IBasicLogger) {
     findMembersByTeam,
 
     upsertRepo,
+    findRepo,
     findReposByProject,
 
     upsertPullRequest,

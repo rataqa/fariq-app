@@ -25,47 +25,47 @@ export type AggregateTeam = {
 }
 
 export type TeamMinAggregateOutputType = {
+  projectId: string | null
   id: string | null
   name: string | null
   description: string | null
-  projectId: string | null
 }
 
 export type TeamMaxAggregateOutputType = {
+  projectId: string | null
   id: string | null
   name: string | null
   description: string | null
-  projectId: string | null
 }
 
 export type TeamCountAggregateOutputType = {
+  projectId: number
   id: number
   name: number
   description: number
-  projectId: number
   _all: number
 }
 
 
 export type TeamMinAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   description?: true
-  projectId?: true
 }
 
 export type TeamMaxAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   description?: true
-  projectId?: true
 }
 
 export type TeamCountAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   description?: true
-  projectId?: true
   _all?: true
 }
 
@@ -142,10 +142,10 @@ export type TeamGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 export type TeamGroupByOutputType = {
+  projectId: string
   id: string
   name: string
   description: string
-  projectId: string
   _count: TeamCountAggregateOutputType | null
   _min: TeamMinAggregateOutputType | null
   _max: TeamMaxAggregateOutputType | null
@@ -170,40 +170,41 @@ export type TeamWhereInput = {
   AND?: Prisma.TeamWhereInput | Prisma.TeamWhereInput[]
   OR?: Prisma.TeamWhereInput[]
   NOT?: Prisma.TeamWhereInput | Prisma.TeamWhereInput[]
+  projectId?: Prisma.UuidFilter<"Team"> | string
   id?: Prisma.UuidFilter<"Team"> | string
   name?: Prisma.StringFilter<"Team"> | string
   description?: Prisma.StringFilter<"Team"> | string
-  projectId?: Prisma.UuidFilter<"Team"> | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   members?: Prisma.MemberListRelationFilter
 }
 
 export type TeamOrderByWithRelationInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   members?: Prisma.MemberOrderByRelationAggregateInput
 }
 
 export type TeamWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  name?: string
+  projectId_name?: Prisma.TeamProjectIdNameCompoundUniqueInput
   AND?: Prisma.TeamWhereInput | Prisma.TeamWhereInput[]
   OR?: Prisma.TeamWhereInput[]
   NOT?: Prisma.TeamWhereInput | Prisma.TeamWhereInput[]
-  description?: Prisma.StringFilter<"Team"> | string
   projectId?: Prisma.UuidFilter<"Team"> | string
+  name?: Prisma.StringFilter<"Team"> | string
+  description?: Prisma.StringFilter<"Team"> | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   members?: Prisma.MemberListRelationFilter
-}, "id" | "name">
+}, "id" | "projectId_name">
 
 export type TeamOrderByWithAggregationInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
   _count?: Prisma.TeamCountOrderByAggregateInput
   _max?: Prisma.TeamMaxOrderByAggregateInput
   _min?: Prisma.TeamMinOrderByAggregateInput
@@ -213,10 +214,10 @@ export type TeamScalarWhereWithAggregatesInput = {
   AND?: Prisma.TeamScalarWhereWithAggregatesInput | Prisma.TeamScalarWhereWithAggregatesInput[]
   OR?: Prisma.TeamScalarWhereWithAggregatesInput[]
   NOT?: Prisma.TeamScalarWhereWithAggregatesInput | Prisma.TeamScalarWhereWithAggregatesInput[]
+  projectId?: Prisma.UuidWithAggregatesFilter<"Team"> | string
   id?: Prisma.UuidWithAggregatesFilter<"Team"> | string
   name?: Prisma.StringWithAggregatesFilter<"Team"> | string
   description?: Prisma.StringWithAggregatesFilter<"Team"> | string
-  projectId?: Prisma.UuidWithAggregatesFilter<"Team"> | string
 }
 
 export type TeamCreateInput = {
@@ -228,10 +229,10 @@ export type TeamCreateInput = {
 }
 
 export type TeamUncheckedCreateInput = {
+  projectId: string
   id: string
   name: string
   description: string
-  projectId: string
   members?: Prisma.MemberUncheckedCreateNestedManyWithoutTeamInput
 }
 
@@ -244,18 +245,18 @@ export type TeamUpdateInput = {
 }
 
 export type TeamUncheckedUpdateInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   members?: Prisma.MemberUncheckedUpdateManyWithoutTeamNestedInput
 }
 
 export type TeamCreateManyInput = {
+  projectId: string
   id: string
   name: string
   description: string
-  projectId: string
 }
 
 export type TeamUpdateManyMutationInput = {
@@ -265,10 +266,10 @@ export type TeamUpdateManyMutationInput = {
 }
 
 export type TeamUncheckedUpdateManyInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type TeamListRelationFilter = {
@@ -281,25 +282,30 @@ export type TeamOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type TeamProjectIdNameCompoundUniqueInput = {
+  projectId: string
+  name: string
+}
+
 export type TeamCountOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type TeamMaxOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type TeamMinOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   description?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type TeamScalarRelationFilter = {
@@ -407,10 +413,10 @@ export type TeamScalarWhereInput = {
   AND?: Prisma.TeamScalarWhereInput | Prisma.TeamScalarWhereInput[]
   OR?: Prisma.TeamScalarWhereInput[]
   NOT?: Prisma.TeamScalarWhereInput | Prisma.TeamScalarWhereInput[]
+  projectId?: Prisma.UuidFilter<"Team"> | string
   id?: Prisma.UuidFilter<"Team"> | string
   name?: Prisma.StringFilter<"Team"> | string
   description?: Prisma.StringFilter<"Team"> | string
-  projectId?: Prisma.UuidFilter<"Team"> | string
 }
 
 export type TeamCreateWithoutMembersInput = {
@@ -421,10 +427,10 @@ export type TeamCreateWithoutMembersInput = {
 }
 
 export type TeamUncheckedCreateWithoutMembersInput = {
+  projectId: string
   id: string
   name: string
   description: string
-  projectId: string
 }
 
 export type TeamCreateOrConnectWithoutMembersInput = {
@@ -451,10 +457,10 @@ export type TeamUpdateWithoutMembersInput = {
 }
 
 export type TeamUncheckedUpdateWithoutMembersInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type TeamCreateManyProjectInput = {
@@ -515,39 +521,39 @@ export type TeamCountOutputTypeCountMembersArgs<ExtArgs extends runtime.Types.Ex
 
 
 export type TeamSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Team$membersArgs<ExtArgs>
   _count?: boolean | Prisma.TeamCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["team"]>
 
 export type TeamSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["team"]>
 
 export type TeamSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["team"]>
 
 export type TeamSelectScalar = {
+  projectId?: boolean
   id?: boolean
   name?: boolean
   description?: boolean
-  projectId?: boolean
 }
 
-export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "description" | "projectId", ExtArgs["result"]["team"]>
+export type TeamOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"projectId" | "id" | "name" | "description", ExtArgs["result"]["team"]>
 export type TeamInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   members?: boolean | Prisma.Team$membersArgs<ExtArgs>
@@ -567,10 +573,10 @@ export type $TeamPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     members: Prisma.$MemberPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    projectId: string
     id: string
     name: string
     description: string
-    projectId: string
   }, ExtArgs["result"]["team"]>
   composites: {}
 }
@@ -654,8 +660,8 @@ export interface TeamDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * // Get first 10 Teams
    * const teams = await prisma.team.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const teamWithIdOnly = await prisma.team.findMany({ select: { id: true } })
+   * // Only select the `projectId`
+   * const teamWithProjectIdOnly = await prisma.team.findMany({ select: { projectId: true } })
    * 
    */
   findMany<T extends TeamFindManyArgs>(args?: Prisma.SelectSubset<T, TeamFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -699,9 +705,9 @@ export interface TeamDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Create many Teams and only return the `id`
-   * const teamWithIdOnly = await prisma.team.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Teams and only return the `projectId`
+   * const teamWithProjectIdOnly = await prisma.team.createManyAndReturn({
+   *   select: { projectId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -790,9 +796,9 @@ export interface TeamDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Update zero or more Teams and only return the `id`
-   * const teamWithIdOnly = await prisma.team.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Teams and only return the `projectId`
+   * const teamWithProjectIdOnly = await prisma.team.updateManyAndReturn({
+   *   select: { projectId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -996,10 +1002,10 @@ export interface Prisma__TeamClient<T, Null = never, ExtArgs extends runtime.Typ
  * Fields of the Team model
  */
 export interface TeamFieldRefs {
+  readonly projectId: Prisma.FieldRef<"Team", 'String'>
   readonly id: Prisma.FieldRef<"Team", 'String'>
   readonly name: Prisma.FieldRef<"Team", 'String'>
   readonly description: Prisma.FieldRef<"Team", 'String'>
-  readonly projectId: Prisma.FieldRef<"Team", 'String'>
 }
     
 

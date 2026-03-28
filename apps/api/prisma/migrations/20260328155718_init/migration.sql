@@ -9,37 +9,38 @@ CREATE TABLE "Project" (
 
 -- CreateTable
 CREATE TABLE "Team" (
+    "projectId" UUID NOT NULL,
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "description" TEXT NOT NULL,
-    "projectId" UUID NOT NULL,
 
     CONSTRAINT "Team_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Repo" (
+    "projectId" UUID NOT NULL,
     "id" UUID NOT NULL,
     "name" TEXT NOT NULL,
     "webUrl" TEXT NOT NULL,
-    "projectId" UUID NOT NULL,
 
     CONSTRAINT "Repo_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "Member" (
+    "teamId" UUID NOT NULL,
     "id" UUID NOT NULL,
     "descriptor" TEXT NOT NULL,
     "uniqueName" TEXT NOT NULL,
     "displayName" TEXT NOT NULL,
-    "teamId" UUID NOT NULL,
 
     CONSTRAINT "Member_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "PullRequest" (
+    "repoId" UUID NOT NULL,
     "id" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -51,7 +52,6 @@ CREATE TABLE "PullRequest" (
     "creationDay" INTEGER NOT NULL,
     "createdById" UUID NOT NULL,
     "createdByUniqueName" TEXT NOT NULL,
-    "repoId" UUID NOT NULL,
 
     CONSTRAINT "PullRequest_pkey" PRIMARY KEY ("id")
 );
@@ -60,16 +60,22 @@ CREATE TABLE "PullRequest" (
 CREATE UNIQUE INDEX "Project_name_key" ON "Project"("name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Team_name_key" ON "Team"("name");
-
--- CreateIndex
 CREATE INDEX "Team_projectId_idx" ON "Team"("projectId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Repo_name_key" ON "Repo"("name");
+CREATE INDEX "Team_name_idx" ON "Team"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Team_projectId_name_key" ON "Team"("projectId", "name");
 
 -- CreateIndex
 CREATE INDEX "Repo_projectId_idx" ON "Repo"("projectId");
+
+-- CreateIndex
+CREATE INDEX "Repo_name_idx" ON "Repo"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Repo_projectId_name_key" ON "Repo"("projectId", "name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Member_descriptor_key" ON "Member"("descriptor");

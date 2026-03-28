@@ -84,37 +84,38 @@ export type ProjectScalarFieldEnum = (typeof ProjectScalarFieldEnum)[keyof typeo
 
 
 export const TeamScalarFieldEnum = {
+  projectId: 'projectId',
   id: 'id',
   name: 'name',
-  description: 'description',
-  projectId: 'projectId'
+  description: 'description'
 } as const
 
 export type TeamScalarFieldEnum = (typeof TeamScalarFieldEnum)[keyof typeof TeamScalarFieldEnum]
 
 
 export const RepoScalarFieldEnum = {
+  projectId: 'projectId',
   id: 'id',
   name: 'name',
-  webUrl: 'webUrl',
-  projectId: 'projectId'
+  webUrl: 'webUrl'
 } as const
 
 export type RepoScalarFieldEnum = (typeof RepoScalarFieldEnum)[keyof typeof RepoScalarFieldEnum]
 
 
 export const MemberScalarFieldEnum = {
+  teamId: 'teamId',
   id: 'id',
   descriptor: 'descriptor',
   uniqueName: 'uniqueName',
-  displayName: 'displayName',
-  teamId: 'teamId'
+  displayName: 'displayName'
 } as const
 
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
 
 
 export const PullRequestScalarFieldEnum = {
+  repoId: 'repoId',
   id: 'id',
   title: 'title',
   description: 'description',
@@ -125,8 +126,7 @@ export const PullRequestScalarFieldEnum = {
   closedDate: 'closedDate',
   creationDay: 'creationDay',
   createdById: 'createdById',
-  createdByUniqueName: 'createdByUniqueName',
-  repoId: 'repoId'
+  createdByUniqueName: 'createdByUniqueName'
 } as const
 
 export type PullRequestScalarFieldEnum = (typeof PullRequestScalarFieldEnum)[keyof typeof PullRequestScalarFieldEnum]

@@ -25,53 +25,53 @@ export type AggregateMember = {
 }
 
 export type MemberMinAggregateOutputType = {
+  teamId: string | null
   id: string | null
   descriptor: string | null
   uniqueName: string | null
   displayName: string | null
-  teamId: string | null
 }
 
 export type MemberMaxAggregateOutputType = {
+  teamId: string | null
   id: string | null
   descriptor: string | null
   uniqueName: string | null
   displayName: string | null
-  teamId: string | null
 }
 
 export type MemberCountAggregateOutputType = {
+  teamId: number
   id: number
   descriptor: number
   uniqueName: number
   displayName: number
-  teamId: number
   _all: number
 }
 
 
 export type MemberMinAggregateInputType = {
+  teamId?: true
   id?: true
   descriptor?: true
   uniqueName?: true
   displayName?: true
-  teamId?: true
 }
 
 export type MemberMaxAggregateInputType = {
+  teamId?: true
   id?: true
   descriptor?: true
   uniqueName?: true
   displayName?: true
-  teamId?: true
 }
 
 export type MemberCountAggregateInputType = {
+  teamId?: true
   id?: true
   descriptor?: true
   uniqueName?: true
   displayName?: true
-  teamId?: true
   _all?: true
 }
 
@@ -148,11 +148,11 @@ export type MemberGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalA
 }
 
 export type MemberGroupByOutputType = {
+  teamId: string
   id: string
   descriptor: string
   uniqueName: string
   displayName: string
-  teamId: string
   _count: MemberCountAggregateOutputType | null
   _min: MemberMinAggregateOutputType | null
   _max: MemberMaxAggregateOutputType | null
@@ -177,21 +177,21 @@ export type MemberWhereInput = {
   AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
+  teamId?: Prisma.UuidFilter<"Member"> | string
   id?: Prisma.UuidFilter<"Member"> | string
   descriptor?: Prisma.StringFilter<"Member"> | string
   uniqueName?: Prisma.StringFilter<"Member"> | string
   displayName?: Prisma.StringFilter<"Member"> | string
-  teamId?: Prisma.UuidFilter<"Member"> | string
   team?: Prisma.XOR<Prisma.TeamScalarRelationFilter, Prisma.TeamWhereInput>
   pullRequests?: Prisma.PullRequestListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
+  teamId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   descriptor?: Prisma.SortOrder
   uniqueName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
-  teamId?: Prisma.SortOrder
   team?: Prisma.TeamOrderByWithRelationInput
   pullRequests?: Prisma.PullRequestOrderByRelationAggregateInput
 }
@@ -203,18 +203,18 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
   OR?: Prisma.MemberWhereInput[]
   NOT?: Prisma.MemberWhereInput | Prisma.MemberWhereInput[]
-  displayName?: Prisma.StringFilter<"Member"> | string
   teamId?: Prisma.UuidFilter<"Member"> | string
+  displayName?: Prisma.StringFilter<"Member"> | string
   team?: Prisma.XOR<Prisma.TeamScalarRelationFilter, Prisma.TeamWhereInput>
   pullRequests?: Prisma.PullRequestListRelationFilter
 }, "id" | "descriptor" | "uniqueName">
 
 export type MemberOrderByWithAggregationInput = {
+  teamId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   descriptor?: Prisma.SortOrder
   uniqueName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
-  teamId?: Prisma.SortOrder
   _count?: Prisma.MemberCountOrderByAggregateInput
   _max?: Prisma.MemberMaxOrderByAggregateInput
   _min?: Prisma.MemberMinOrderByAggregateInput
@@ -224,11 +224,11 @@ export type MemberScalarWhereWithAggregatesInput = {
   AND?: Prisma.MemberScalarWhereWithAggregatesInput | Prisma.MemberScalarWhereWithAggregatesInput[]
   OR?: Prisma.MemberScalarWhereWithAggregatesInput[]
   NOT?: Prisma.MemberScalarWhereWithAggregatesInput | Prisma.MemberScalarWhereWithAggregatesInput[]
+  teamId?: Prisma.UuidWithAggregatesFilter<"Member"> | string
   id?: Prisma.UuidWithAggregatesFilter<"Member"> | string
   descriptor?: Prisma.StringWithAggregatesFilter<"Member"> | string
   uniqueName?: Prisma.StringWithAggregatesFilter<"Member"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"Member"> | string
-  teamId?: Prisma.UuidWithAggregatesFilter<"Member"> | string
 }
 
 export type MemberCreateInput = {
@@ -241,11 +241,11 @@ export type MemberCreateInput = {
 }
 
 export type MemberUncheckedCreateInput = {
+  teamId: string
   id: string
   descriptor: string
   uniqueName: string
   displayName: string
-  teamId: string
   pullRequests?: Prisma.PullRequestUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
@@ -259,20 +259,20 @@ export type MemberUpdateInput = {
 }
 
 export type MemberUncheckedUpdateInput = {
+  teamId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descriptor?: Prisma.StringFieldUpdateOperationsInput | string
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
-  teamId?: Prisma.StringFieldUpdateOperationsInput | string
   pullRequests?: Prisma.PullRequestUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateManyInput = {
+  teamId: string
   id: string
   descriptor: string
   uniqueName: string
   displayName: string
-  teamId: string
 }
 
 export type MemberUpdateManyMutationInput = {
@@ -283,11 +283,11 @@ export type MemberUpdateManyMutationInput = {
 }
 
 export type MemberUncheckedUpdateManyInput = {
+  teamId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descriptor?: Prisma.StringFieldUpdateOperationsInput | string
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
-  teamId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type MemberListRelationFilter = {
@@ -301,27 +301,27 @@ export type MemberOrderByRelationAggregateInput = {
 }
 
 export type MemberCountOrderByAggregateInput = {
+  teamId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   descriptor?: Prisma.SortOrder
   uniqueName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
-  teamId?: Prisma.SortOrder
 }
 
 export type MemberMaxOrderByAggregateInput = {
+  teamId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   descriptor?: Prisma.SortOrder
   uniqueName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
-  teamId?: Prisma.SortOrder
 }
 
 export type MemberMinOrderByAggregateInput = {
+  teamId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   descriptor?: Prisma.SortOrder
   uniqueName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
-  teamId?: Prisma.SortOrder
 }
 
 export type MemberScalarRelationFilter = {
@@ -431,11 +431,11 @@ export type MemberScalarWhereInput = {
   AND?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
   OR?: Prisma.MemberScalarWhereInput[]
   NOT?: Prisma.MemberScalarWhereInput | Prisma.MemberScalarWhereInput[]
+  teamId?: Prisma.UuidFilter<"Member"> | string
   id?: Prisma.UuidFilter<"Member"> | string
   descriptor?: Prisma.StringFilter<"Member"> | string
   uniqueName?: Prisma.StringFilter<"Member"> | string
   displayName?: Prisma.StringFilter<"Member"> | string
-  teamId?: Prisma.UuidFilter<"Member"> | string
 }
 
 export type MemberCreateWithoutPullRequestsInput = {
@@ -447,11 +447,11 @@ export type MemberCreateWithoutPullRequestsInput = {
 }
 
 export type MemberUncheckedCreateWithoutPullRequestsInput = {
+  teamId: string
   id: string
   descriptor: string
   uniqueName: string
   displayName: string
-  teamId: string
 }
 
 export type MemberCreateOrConnectWithoutPullRequestsInput = {
@@ -479,11 +479,11 @@ export type MemberUpdateWithoutPullRequestsInput = {
 }
 
 export type MemberUncheckedUpdateWithoutPullRequestsInput = {
+  teamId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   descriptor?: Prisma.StringFieldUpdateOperationsInput | string
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
-  teamId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type MemberCreateManyTeamInput = {
@@ -548,43 +548,43 @@ export type MemberCountOutputTypeCountPullRequestsArgs<ExtArgs extends runtime.T
 
 
 export type MemberSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  teamId?: boolean
   id?: boolean
   descriptor?: boolean
   uniqueName?: boolean
   displayName?: boolean
-  teamId?: boolean
   team?: boolean | Prisma.TeamDefaultArgs<ExtArgs>
   pullRequests?: boolean | Prisma.Member$pullRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.MemberCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  teamId?: boolean
   id?: boolean
   descriptor?: boolean
   uniqueName?: boolean
   displayName?: boolean
-  teamId?: boolean
   team?: boolean | Prisma.TeamDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  teamId?: boolean
   id?: boolean
   descriptor?: boolean
   uniqueName?: boolean
   displayName?: boolean
-  teamId?: boolean
   team?: boolean | Prisma.TeamDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["member"]>
 
 export type MemberSelectScalar = {
+  teamId?: boolean
   id?: boolean
   descriptor?: boolean
   uniqueName?: boolean
   displayName?: boolean
-  teamId?: boolean
 }
 
-export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "descriptor" | "uniqueName" | "displayName" | "teamId", ExtArgs["result"]["member"]>
+export type MemberOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"teamId" | "id" | "descriptor" | "uniqueName" | "displayName", ExtArgs["result"]["member"]>
 export type MemberInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   team?: boolean | Prisma.TeamDefaultArgs<ExtArgs>
   pullRequests?: boolean | Prisma.Member$pullRequestsArgs<ExtArgs>
@@ -604,11 +604,11 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
     pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    teamId: string
     id: string
     descriptor: string
     uniqueName: string
     displayName: string
-    teamId: string
   }, ExtArgs["result"]["member"]>
   composites: {}
 }
@@ -692,8 +692,8 @@ export interface MemberDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    * // Get first 10 Members
    * const members = await prisma.member.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const memberWithIdOnly = await prisma.member.findMany({ select: { id: true } })
+   * // Only select the `teamId`
+   * const memberWithTeamIdOnly = await prisma.member.findMany({ select: { teamId: true } })
    * 
    */
   findMany<T extends MemberFindManyArgs>(args?: Prisma.SelectSubset<T, MemberFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$MemberPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -737,9 +737,9 @@ export interface MemberDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    *   ]
    * })
    * 
-   * // Create many Members and only return the `id`
-   * const memberWithIdOnly = await prisma.member.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Members and only return the `teamId`
+   * const memberWithTeamIdOnly = await prisma.member.createManyAndReturn({
+   *   select: { teamId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -828,9 +828,9 @@ export interface MemberDelegate<ExtArgs extends runtime.Types.Extensions.Interna
    *   ]
    * })
    * 
-   * // Update zero or more Members and only return the `id`
-   * const memberWithIdOnly = await prisma.member.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Members and only return the `teamId`
+   * const memberWithTeamIdOnly = await prisma.member.updateManyAndReturn({
+   *   select: { teamId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1034,11 +1034,11 @@ export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.T
  * Fields of the Member model
  */
 export interface MemberFieldRefs {
+  readonly teamId: Prisma.FieldRef<"Member", 'String'>
   readonly id: Prisma.FieldRef<"Member", 'String'>
   readonly descriptor: Prisma.FieldRef<"Member", 'String'>
   readonly uniqueName: Prisma.FieldRef<"Member", 'String'>
   readonly displayName: Prisma.FieldRef<"Member", 'String'>
-  readonly teamId: Prisma.FieldRef<"Member", 'String'>
 }
     
 

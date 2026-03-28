@@ -37,6 +37,7 @@ export type PullRequestSumAggregateOutputType = {
 }
 
 export type PullRequestMinAggregateOutputType = {
+  repoId: string | null
   id: number | null
   title: string | null
   description: string | null
@@ -48,10 +49,10 @@ export type PullRequestMinAggregateOutputType = {
   creationDay: number | null
   createdById: string | null
   createdByUniqueName: string | null
-  repoId: string | null
 }
 
 export type PullRequestMaxAggregateOutputType = {
+  repoId: string | null
   id: number | null
   title: string | null
   description: string | null
@@ -63,10 +64,10 @@ export type PullRequestMaxAggregateOutputType = {
   creationDay: number | null
   createdById: string | null
   createdByUniqueName: string | null
-  repoId: string | null
 }
 
 export type PullRequestCountAggregateOutputType = {
+  repoId: number
   id: number
   title: number
   description: number
@@ -78,7 +79,6 @@ export type PullRequestCountAggregateOutputType = {
   creationDay: number
   createdById: number
   createdByUniqueName: number
-  repoId: number
   _all: number
 }
 
@@ -94,6 +94,7 @@ export type PullRequestSumAggregateInputType = {
 }
 
 export type PullRequestMinAggregateInputType = {
+  repoId?: true
   id?: true
   title?: true
   description?: true
@@ -105,10 +106,10 @@ export type PullRequestMinAggregateInputType = {
   creationDay?: true
   createdById?: true
   createdByUniqueName?: true
-  repoId?: true
 }
 
 export type PullRequestMaxAggregateInputType = {
+  repoId?: true
   id?: true
   title?: true
   description?: true
@@ -120,10 +121,10 @@ export type PullRequestMaxAggregateInputType = {
   creationDay?: true
   createdById?: true
   createdByUniqueName?: true
-  repoId?: true
 }
 
 export type PullRequestCountAggregateInputType = {
+  repoId?: true
   id?: true
   title?: true
   description?: true
@@ -135,7 +136,6 @@ export type PullRequestCountAggregateInputType = {
   creationDay?: true
   createdById?: true
   createdByUniqueName?: true
-  repoId?: true
   _all?: true
 }
 
@@ -226,6 +226,7 @@ export type PullRequestGroupByArgs<ExtArgs extends runtime.Types.Extensions.Inte
 }
 
 export type PullRequestGroupByOutputType = {
+  repoId: string
   id: number
   title: string
   description: string
@@ -237,7 +238,6 @@ export type PullRequestGroupByOutputType = {
   creationDay: number
   createdById: string
   createdByUniqueName: string
-  repoId: string
   _count: PullRequestCountAggregateOutputType | null
   _avg: PullRequestAvgAggregateOutputType | null
   _sum: PullRequestSumAggregateOutputType | null
@@ -264,6 +264,7 @@ export type PullRequestWhereInput = {
   AND?: Prisma.PullRequestWhereInput | Prisma.PullRequestWhereInput[]
   OR?: Prisma.PullRequestWhereInput[]
   NOT?: Prisma.PullRequestWhereInput | Prisma.PullRequestWhereInput[]
+  repoId?: Prisma.UuidFilter<"PullRequest"> | string
   id?: Prisma.IntFilter<"PullRequest"> | number
   title?: Prisma.StringFilter<"PullRequest"> | string
   description?: Prisma.StringFilter<"PullRequest"> | string
@@ -275,12 +276,12 @@ export type PullRequestWhereInput = {
   creationDay?: Prisma.IntFilter<"PullRequest"> | number
   createdById?: Prisma.UuidFilter<"PullRequest"> | string
   createdByUniqueName?: Prisma.StringFilter<"PullRequest"> | string
-  repoId?: Prisma.UuidFilter<"PullRequest"> | string
   repo?: Prisma.XOR<Prisma.RepoScalarRelationFilter, Prisma.RepoWhereInput>
   createdBy?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
 }
 
 export type PullRequestOrderByWithRelationInput = {
+  repoId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -292,7 +293,6 @@ export type PullRequestOrderByWithRelationInput = {
   creationDay?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdByUniqueName?: Prisma.SortOrder
-  repoId?: Prisma.SortOrder
   repo?: Prisma.RepoOrderByWithRelationInput
   createdBy?: Prisma.MemberOrderByWithRelationInput
 }
@@ -302,6 +302,7 @@ export type PullRequestWhereUniqueInput = Prisma.AtLeast<{
   AND?: Prisma.PullRequestWhereInput | Prisma.PullRequestWhereInput[]
   OR?: Prisma.PullRequestWhereInput[]
   NOT?: Prisma.PullRequestWhereInput | Prisma.PullRequestWhereInput[]
+  repoId?: Prisma.UuidFilter<"PullRequest"> | string
   title?: Prisma.StringFilter<"PullRequest"> | string
   description?: Prisma.StringFilter<"PullRequest"> | string
   status?: Prisma.StringFilter<"PullRequest"> | string
@@ -312,12 +313,12 @@ export type PullRequestWhereUniqueInput = Prisma.AtLeast<{
   creationDay?: Prisma.IntFilter<"PullRequest"> | number
   createdById?: Prisma.UuidFilter<"PullRequest"> | string
   createdByUniqueName?: Prisma.StringFilter<"PullRequest"> | string
-  repoId?: Prisma.UuidFilter<"PullRequest"> | string
   repo?: Prisma.XOR<Prisma.RepoScalarRelationFilter, Prisma.RepoWhereInput>
   createdBy?: Prisma.XOR<Prisma.MemberScalarRelationFilter, Prisma.MemberWhereInput>
 }, "id">
 
 export type PullRequestOrderByWithAggregationInput = {
+  repoId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -329,7 +330,6 @@ export type PullRequestOrderByWithAggregationInput = {
   creationDay?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdByUniqueName?: Prisma.SortOrder
-  repoId?: Prisma.SortOrder
   _count?: Prisma.PullRequestCountOrderByAggregateInput
   _avg?: Prisma.PullRequestAvgOrderByAggregateInput
   _max?: Prisma.PullRequestMaxOrderByAggregateInput
@@ -341,6 +341,7 @@ export type PullRequestScalarWhereWithAggregatesInput = {
   AND?: Prisma.PullRequestScalarWhereWithAggregatesInput | Prisma.PullRequestScalarWhereWithAggregatesInput[]
   OR?: Prisma.PullRequestScalarWhereWithAggregatesInput[]
   NOT?: Prisma.PullRequestScalarWhereWithAggregatesInput | Prisma.PullRequestScalarWhereWithAggregatesInput[]
+  repoId?: Prisma.UuidWithAggregatesFilter<"PullRequest"> | string
   id?: Prisma.IntWithAggregatesFilter<"PullRequest"> | number
   title?: Prisma.StringWithAggregatesFilter<"PullRequest"> | string
   description?: Prisma.StringWithAggregatesFilter<"PullRequest"> | string
@@ -352,7 +353,6 @@ export type PullRequestScalarWhereWithAggregatesInput = {
   creationDay?: Prisma.IntWithAggregatesFilter<"PullRequest"> | number
   createdById?: Prisma.UuidWithAggregatesFilter<"PullRequest"> | string
   createdByUniqueName?: Prisma.StringWithAggregatesFilter<"PullRequest"> | string
-  repoId?: Prisma.UuidWithAggregatesFilter<"PullRequest"> | string
 }
 
 export type PullRequestCreateInput = {
@@ -371,6 +371,7 @@ export type PullRequestCreateInput = {
 }
 
 export type PullRequestUncheckedCreateInput = {
+  repoId: string
   id: number
   title: string
   description: string
@@ -382,7 +383,6 @@ export type PullRequestUncheckedCreateInput = {
   creationDay: number
   createdById: string
   createdByUniqueName: string
-  repoId: string
 }
 
 export type PullRequestUpdateInput = {
@@ -401,6 +401,7 @@ export type PullRequestUpdateInput = {
 }
 
 export type PullRequestUncheckedUpdateInput = {
+  repoId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -412,10 +413,10 @@ export type PullRequestUncheckedUpdateInput = {
   creationDay?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdByUniqueName?: Prisma.StringFieldUpdateOperationsInput | string
-  repoId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PullRequestCreateManyInput = {
+  repoId: string
   id: number
   title: string
   description: string
@@ -427,7 +428,6 @@ export type PullRequestCreateManyInput = {
   creationDay: number
   createdById: string
   createdByUniqueName: string
-  repoId: string
 }
 
 export type PullRequestUpdateManyMutationInput = {
@@ -444,6 +444,7 @@ export type PullRequestUpdateManyMutationInput = {
 }
 
 export type PullRequestUncheckedUpdateManyInput = {
+  repoId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -455,7 +456,6 @@ export type PullRequestUncheckedUpdateManyInput = {
   creationDay?: Prisma.IntFieldUpdateOperationsInput | number
   createdById?: Prisma.StringFieldUpdateOperationsInput | string
   createdByUniqueName?: Prisma.StringFieldUpdateOperationsInput | string
-  repoId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PullRequestListRelationFilter = {
@@ -469,6 +469,7 @@ export type PullRequestOrderByRelationAggregateInput = {
 }
 
 export type PullRequestCountOrderByAggregateInput = {
+  repoId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -480,7 +481,6 @@ export type PullRequestCountOrderByAggregateInput = {
   creationDay?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdByUniqueName?: Prisma.SortOrder
-  repoId?: Prisma.SortOrder
 }
 
 export type PullRequestAvgOrderByAggregateInput = {
@@ -489,6 +489,7 @@ export type PullRequestAvgOrderByAggregateInput = {
 }
 
 export type PullRequestMaxOrderByAggregateInput = {
+  repoId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -500,10 +501,10 @@ export type PullRequestMaxOrderByAggregateInput = {
   creationDay?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdByUniqueName?: Prisma.SortOrder
-  repoId?: Prisma.SortOrder
 }
 
 export type PullRequestMinOrderByAggregateInput = {
+  repoId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   title?: Prisma.SortOrder
   description?: Prisma.SortOrder
@@ -515,7 +516,6 @@ export type PullRequestMinOrderByAggregateInput = {
   creationDay?: Prisma.SortOrder
   createdById?: Prisma.SortOrder
   createdByUniqueName?: Prisma.SortOrder
-  repoId?: Prisma.SortOrder
 }
 
 export type PullRequestSumOrderByAggregateInput = {
@@ -681,6 +681,7 @@ export type PullRequestScalarWhereInput = {
   AND?: Prisma.PullRequestScalarWhereInput | Prisma.PullRequestScalarWhereInput[]
   OR?: Prisma.PullRequestScalarWhereInput[]
   NOT?: Prisma.PullRequestScalarWhereInput | Prisma.PullRequestScalarWhereInput[]
+  repoId?: Prisma.UuidFilter<"PullRequest"> | string
   id?: Prisma.IntFilter<"PullRequest"> | number
   title?: Prisma.StringFilter<"PullRequest"> | string
   description?: Prisma.StringFilter<"PullRequest"> | string
@@ -692,7 +693,6 @@ export type PullRequestScalarWhereInput = {
   creationDay?: Prisma.IntFilter<"PullRequest"> | number
   createdById?: Prisma.UuidFilter<"PullRequest"> | string
   createdByUniqueName?: Prisma.StringFilter<"PullRequest"> | string
-  repoId?: Prisma.UuidFilter<"PullRequest"> | string
 }
 
 export type PullRequestCreateWithoutCreatedByInput = {
@@ -710,6 +710,7 @@ export type PullRequestCreateWithoutCreatedByInput = {
 }
 
 export type PullRequestUncheckedCreateWithoutCreatedByInput = {
+  repoId: string
   id: number
   title: string
   description: string
@@ -720,7 +721,6 @@ export type PullRequestUncheckedCreateWithoutCreatedByInput = {
   closedDate?: string | null
   creationDay: number
   createdByUniqueName: string
-  repoId: string
 }
 
 export type PullRequestCreateOrConnectWithoutCreatedByInput = {
@@ -806,6 +806,7 @@ export type PullRequestUncheckedUpdateManyWithoutRepoInput = {
 }
 
 export type PullRequestCreateManyCreatedByInput = {
+  repoId: string
   id: number
   title: string
   description: string
@@ -816,7 +817,6 @@ export type PullRequestCreateManyCreatedByInput = {
   closedDate?: string | null
   creationDay: number
   createdByUniqueName: string
-  repoId: string
 }
 
 export type PullRequestUpdateWithoutCreatedByInput = {
@@ -834,6 +834,7 @@ export type PullRequestUpdateWithoutCreatedByInput = {
 }
 
 export type PullRequestUncheckedUpdateWithoutCreatedByInput = {
+  repoId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -844,10 +845,10 @@ export type PullRequestUncheckedUpdateWithoutCreatedByInput = {
   closedDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creationDay?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUniqueName?: Prisma.StringFieldUpdateOperationsInput | string
-  repoId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type PullRequestUncheckedUpdateManyWithoutCreatedByInput = {
+  repoId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.IntFieldUpdateOperationsInput | number
   title?: Prisma.StringFieldUpdateOperationsInput | string
   description?: Prisma.StringFieldUpdateOperationsInput | string
@@ -858,12 +859,12 @@ export type PullRequestUncheckedUpdateManyWithoutCreatedByInput = {
   closedDate?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   creationDay?: Prisma.IntFieldUpdateOperationsInput | number
   createdByUniqueName?: Prisma.StringFieldUpdateOperationsInput | string
-  repoId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 
 
 export type PullRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  repoId?: boolean
   id?: boolean
   title?: boolean
   description?: boolean
@@ -875,12 +876,12 @@ export type PullRequestSelect<ExtArgs extends runtime.Types.Extensions.InternalA
   creationDay?: boolean
   createdById?: boolean
   createdByUniqueName?: boolean
-  repoId?: boolean
   repo?: boolean | Prisma.RepoDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pullRequest"]>
 
 export type PullRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  repoId?: boolean
   id?: boolean
   title?: boolean
   description?: boolean
@@ -892,12 +893,12 @@ export type PullRequestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.E
   creationDay?: boolean
   createdById?: boolean
   createdByUniqueName?: boolean
-  repoId?: boolean
   repo?: boolean | Prisma.RepoDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pullRequest"]>
 
 export type PullRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  repoId?: boolean
   id?: boolean
   title?: boolean
   description?: boolean
@@ -909,12 +910,12 @@ export type PullRequestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.E
   creationDay?: boolean
   createdById?: boolean
   createdByUniqueName?: boolean
-  repoId?: boolean
   repo?: boolean | Prisma.RepoDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["pullRequest"]>
 
 export type PullRequestSelectScalar = {
+  repoId?: boolean
   id?: boolean
   title?: boolean
   description?: boolean
@@ -926,10 +927,9 @@ export type PullRequestSelectScalar = {
   creationDay?: boolean
   createdById?: boolean
   createdByUniqueName?: boolean
-  repoId?: boolean
 }
 
-export type PullRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "title" | "description" | "status" | "mergeStatus" | "isDraft" | "creationDate" | "closedDate" | "creationDay" | "createdById" | "createdByUniqueName" | "repoId", ExtArgs["result"]["pullRequest"]>
+export type PullRequestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"repoId" | "id" | "title" | "description" | "status" | "mergeStatus" | "isDraft" | "creationDate" | "closedDate" | "creationDay" | "createdById" | "createdByUniqueName", ExtArgs["result"]["pullRequest"]>
 export type PullRequestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   repo?: boolean | Prisma.RepoDefaultArgs<ExtArgs>
   createdBy?: boolean | Prisma.MemberDefaultArgs<ExtArgs>
@@ -950,6 +950,7 @@ export type $PullRequestPayload<ExtArgs extends runtime.Types.Extensions.Interna
     createdBy: Prisma.$MemberPayload<ExtArgs>
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    repoId: string
     id: number
     title: string
     description: string
@@ -961,7 +962,6 @@ export type $PullRequestPayload<ExtArgs extends runtime.Types.Extensions.Interna
     creationDay: number
     createdById: string
     createdByUniqueName: string
-    repoId: string
   }, ExtArgs["result"]["pullRequest"]>
   composites: {}
 }
@@ -1045,8 +1045,8 @@ export interface PullRequestDelegate<ExtArgs extends runtime.Types.Extensions.In
    * // Get first 10 PullRequests
    * const pullRequests = await prisma.pullRequest.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const pullRequestWithIdOnly = await prisma.pullRequest.findMany({ select: { id: true } })
+   * // Only select the `repoId`
+   * const pullRequestWithRepoIdOnly = await prisma.pullRequest.findMany({ select: { repoId: true } })
    * 
    */
   findMany<T extends PullRequestFindManyArgs>(args?: Prisma.SelectSubset<T, PullRequestFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -1090,9 +1090,9 @@ export interface PullRequestDelegate<ExtArgs extends runtime.Types.Extensions.In
    *   ]
    * })
    * 
-   * // Create many PullRequests and only return the `id`
-   * const pullRequestWithIdOnly = await prisma.pullRequest.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many PullRequests and only return the `repoId`
+   * const pullRequestWithRepoIdOnly = await prisma.pullRequest.createManyAndReturn({
+   *   select: { repoId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -1181,9 +1181,9 @@ export interface PullRequestDelegate<ExtArgs extends runtime.Types.Extensions.In
    *   ]
    * })
    * 
-   * // Update zero or more PullRequests and only return the `id`
-   * const pullRequestWithIdOnly = await prisma.pullRequest.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more PullRequests and only return the `repoId`
+   * const pullRequestWithRepoIdOnly = await prisma.pullRequest.updateManyAndReturn({
+   *   select: { repoId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -1387,6 +1387,7 @@ export interface Prisma__PullRequestClient<T, Null = never, ExtArgs extends runt
  * Fields of the PullRequest model
  */
 export interface PullRequestFieldRefs {
+  readonly repoId: Prisma.FieldRef<"PullRequest", 'String'>
   readonly id: Prisma.FieldRef<"PullRequest", 'Int'>
   readonly title: Prisma.FieldRef<"PullRequest", 'String'>
   readonly description: Prisma.FieldRef<"PullRequest", 'String'>
@@ -1398,7 +1399,6 @@ export interface PullRequestFieldRefs {
   readonly creationDay: Prisma.FieldRef<"PullRequest", 'Int'>
   readonly createdById: Prisma.FieldRef<"PullRequest", 'String'>
   readonly createdByUniqueName: Prisma.FieldRef<"PullRequest", 'String'>
-  readonly repoId: Prisma.FieldRef<"PullRequest", 'String'>
 }
     
 

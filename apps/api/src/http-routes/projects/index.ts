@@ -171,6 +171,20 @@ export default function makeRoutes(
     const sync = String(req.query['sync'] || '') === 'true';
     if (sync) {
       const api = azureDevOps.makeOrgApi();
+      let repoName = '';
+      const repo = await db.findRepo(repoId);
+      if (!repo) {
+        const repoResult = await api.repos(projectId);
+        const found = repoResult.adapt().value.find(r => r.id);
+        if (found) {
+          await db.upsertRepo(found);
+        } else {
+          return res.json({ error: 'not found' });
+        }
+      } else {
+        repoName = repo.name;
+      }
+
       const { $top, $skip } = getTopAndSkipParams(req.query);
       const options = { $top, $skip, "searchCriteria.status": 'completed' };
       const result = await api.repoPullRequests(repoId, options, projectId);
@@ -178,7 +192,7 @@ export default function makeRoutes(
       res.json({ data, count });
 
       for (const row of data) {
-        db.upsertPullRequest({ ...row, repoId }).then(noOp).catch(noOp);
+        db.upsertPullRequest({ ...row, repoId }, repoName, false).then(noOp).catch(noOp);
       }
     } else {
       const data = await db.pullRequestsInRepo(repoId);

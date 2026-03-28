@@ -5,6 +5,9 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
+    "db:migrate:reset": "prisma migrate reset",
+    "db:migrate:init": "prisma migrate dev --name init",
+    "db:generate": "prisma generate",
     "build": "tsc",
     "start:ts": "ts-node src/index.ts",
     "start:tsx": "tsx src/index.ts",

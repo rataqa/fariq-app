@@ -25,47 +25,47 @@ export type AggregateRepo = {
 }
 
 export type RepoMinAggregateOutputType = {
+  projectId: string | null
   id: string | null
   name: string | null
   webUrl: string | null
-  projectId: string | null
 }
 
 export type RepoMaxAggregateOutputType = {
+  projectId: string | null
   id: string | null
   name: string | null
   webUrl: string | null
-  projectId: string | null
 }
 
 export type RepoCountAggregateOutputType = {
+  projectId: number
   id: number
   name: number
   webUrl: number
-  projectId: number
   _all: number
 }
 
 
 export type RepoMinAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   webUrl?: true
-  projectId?: true
 }
 
 export type RepoMaxAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   webUrl?: true
-  projectId?: true
 }
 
 export type RepoCountAggregateInputType = {
+  projectId?: true
   id?: true
   name?: true
   webUrl?: true
-  projectId?: true
   _all?: true
 }
 
@@ -142,10 +142,10 @@ export type RepoGroupByArgs<ExtArgs extends runtime.Types.Extensions.InternalArg
 }
 
 export type RepoGroupByOutputType = {
+  projectId: string
   id: string
   name: string
   webUrl: string
-  projectId: string
   _count: RepoCountAggregateOutputType | null
   _min: RepoMinAggregateOutputType | null
   _max: RepoMaxAggregateOutputType | null
@@ -170,40 +170,41 @@ export type RepoWhereInput = {
   AND?: Prisma.RepoWhereInput | Prisma.RepoWhereInput[]
   OR?: Prisma.RepoWhereInput[]
   NOT?: Prisma.RepoWhereInput | Prisma.RepoWhereInput[]
+  projectId?: Prisma.UuidFilter<"Repo"> | string
   id?: Prisma.UuidFilter<"Repo"> | string
   name?: Prisma.StringFilter<"Repo"> | string
   webUrl?: Prisma.StringFilter<"Repo"> | string
-  projectId?: Prisma.UuidFilter<"Repo"> | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   pullRequests?: Prisma.PullRequestListRelationFilter
 }
 
 export type RepoOrderByWithRelationInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   webUrl?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
   project?: Prisma.ProjectOrderByWithRelationInput
   pullRequests?: Prisma.PullRequestOrderByRelationAggregateInput
 }
 
 export type RepoWhereUniqueInput = Prisma.AtLeast<{
   id?: string
-  name?: string
+  projectId_name?: Prisma.RepoProjectIdNameCompoundUniqueInput
   AND?: Prisma.RepoWhereInput | Prisma.RepoWhereInput[]
   OR?: Prisma.RepoWhereInput[]
   NOT?: Prisma.RepoWhereInput | Prisma.RepoWhereInput[]
-  webUrl?: Prisma.StringFilter<"Repo"> | string
   projectId?: Prisma.UuidFilter<"Repo"> | string
+  name?: Prisma.StringFilter<"Repo"> | string
+  webUrl?: Prisma.StringFilter<"Repo"> | string
   project?: Prisma.XOR<Prisma.ProjectScalarRelationFilter, Prisma.ProjectWhereInput>
   pullRequests?: Prisma.PullRequestListRelationFilter
-}, "id" | "name">
+}, "id" | "projectId_name">
 
 export type RepoOrderByWithAggregationInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   webUrl?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
   _count?: Prisma.RepoCountOrderByAggregateInput
   _max?: Prisma.RepoMaxOrderByAggregateInput
   _min?: Prisma.RepoMinOrderByAggregateInput
@@ -213,10 +214,10 @@ export type RepoScalarWhereWithAggregatesInput = {
   AND?: Prisma.RepoScalarWhereWithAggregatesInput | Prisma.RepoScalarWhereWithAggregatesInput[]
   OR?: Prisma.RepoScalarWhereWithAggregatesInput[]
   NOT?: Prisma.RepoScalarWhereWithAggregatesInput | Prisma.RepoScalarWhereWithAggregatesInput[]
+  projectId?: Prisma.UuidWithAggregatesFilter<"Repo"> | string
   id?: Prisma.UuidWithAggregatesFilter<"Repo"> | string
   name?: Prisma.StringWithAggregatesFilter<"Repo"> | string
   webUrl?: Prisma.StringWithAggregatesFilter<"Repo"> | string
-  projectId?: Prisma.UuidWithAggregatesFilter<"Repo"> | string
 }
 
 export type RepoCreateInput = {
@@ -228,10 +229,10 @@ export type RepoCreateInput = {
 }
 
 export type RepoUncheckedCreateInput = {
+  projectId: string
   id: string
   name: string
   webUrl: string
-  projectId: string
   pullRequests?: Prisma.PullRequestUncheckedCreateNestedManyWithoutRepoInput
 }
 
@@ -244,18 +245,18 @@ export type RepoUpdateInput = {
 }
 
 export type RepoUncheckedUpdateInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   webUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   pullRequests?: Prisma.PullRequestUncheckedUpdateManyWithoutRepoNestedInput
 }
 
 export type RepoCreateManyInput = {
+  projectId: string
   id: string
   name: string
   webUrl: string
-  projectId: string
 }
 
 export type RepoUpdateManyMutationInput = {
@@ -265,10 +266,10 @@ export type RepoUpdateManyMutationInput = {
 }
 
 export type RepoUncheckedUpdateManyInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   webUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RepoListRelationFilter = {
@@ -281,25 +282,30 @@ export type RepoOrderByRelationAggregateInput = {
   _count?: Prisma.SortOrder
 }
 
+export type RepoProjectIdNameCompoundUniqueInput = {
+  projectId: string
+  name: string
+}
+
 export type RepoCountOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   webUrl?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type RepoMaxOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   webUrl?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type RepoMinOrderByAggregateInput = {
+  projectId?: Prisma.SortOrder
   id?: Prisma.SortOrder
   name?: Prisma.SortOrder
   webUrl?: Prisma.SortOrder
-  projectId?: Prisma.SortOrder
 }
 
 export type RepoScalarRelationFilter = {
@@ -407,10 +413,10 @@ export type RepoScalarWhereInput = {
   AND?: Prisma.RepoScalarWhereInput | Prisma.RepoScalarWhereInput[]
   OR?: Prisma.RepoScalarWhereInput[]
   NOT?: Prisma.RepoScalarWhereInput | Prisma.RepoScalarWhereInput[]
+  projectId?: Prisma.UuidFilter<"Repo"> | string
   id?: Prisma.UuidFilter<"Repo"> | string
   name?: Prisma.StringFilter<"Repo"> | string
   webUrl?: Prisma.StringFilter<"Repo"> | string
-  projectId?: Prisma.UuidFilter<"Repo"> | string
 }
 
 export type RepoCreateWithoutPullRequestsInput = {
@@ -421,10 +427,10 @@ export type RepoCreateWithoutPullRequestsInput = {
 }
 
 export type RepoUncheckedCreateWithoutPullRequestsInput = {
+  projectId: string
   id: string
   name: string
   webUrl: string
-  projectId: string
 }
 
 export type RepoCreateOrConnectWithoutPullRequestsInput = {
@@ -451,10 +457,10 @@ export type RepoUpdateWithoutPullRequestsInput = {
 }
 
 export type RepoUncheckedUpdateWithoutPullRequestsInput = {
+  projectId?: Prisma.StringFieldUpdateOperationsInput | string
   id?: Prisma.StringFieldUpdateOperationsInput | string
   name?: Prisma.StringFieldUpdateOperationsInput | string
   webUrl?: Prisma.StringFieldUpdateOperationsInput | string
-  projectId?: Prisma.StringFieldUpdateOperationsInput | string
 }
 
 export type RepoCreateManyProjectInput = {
@@ -515,39 +521,39 @@ export type RepoCountOutputTypeCountPullRequestsArgs<ExtArgs extends runtime.Typ
 
 
 export type RepoSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   webUrl?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   pullRequests?: boolean | Prisma.Repo$pullRequestsArgs<ExtArgs>
   _count?: boolean | Prisma.RepoCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repo"]>
 
 export type RepoSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   webUrl?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repo"]>
 
 export type RepoSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
+  projectId?: boolean
   id?: boolean
   name?: boolean
   webUrl?: boolean
-  projectId?: boolean
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["repo"]>
 
 export type RepoSelectScalar = {
+  projectId?: boolean
   id?: boolean
   name?: boolean
   webUrl?: boolean
-  projectId?: boolean
 }
 
-export type RepoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "name" | "webUrl" | "projectId", ExtArgs["result"]["repo"]>
+export type RepoOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"projectId" | "id" | "name" | "webUrl", ExtArgs["result"]["repo"]>
 export type RepoInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   project?: boolean | Prisma.ProjectDefaultArgs<ExtArgs>
   pullRequests?: boolean | Prisma.Repo$pullRequestsArgs<ExtArgs>
@@ -567,10 +573,10 @@ export type $RepoPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
+    projectId: string
     id: string
     name: string
     webUrl: string
-    projectId: string
   }, ExtArgs["result"]["repo"]>
   composites: {}
 }
@@ -654,8 +660,8 @@ export interface RepoDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    * // Get first 10 Repos
    * const repos = await prisma.repo.findMany({ take: 10 })
    * 
-   * // Only select the `id`
-   * const repoWithIdOnly = await prisma.repo.findMany({ select: { id: true } })
+   * // Only select the `projectId`
+   * const repoWithProjectIdOnly = await prisma.repo.findMany({ select: { projectId: true } })
    * 
    */
   findMany<T extends RepoFindManyArgs>(args?: Prisma.SelectSubset<T, RepoFindManyArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepoPayload<ExtArgs>, T, "findMany", GlobalOmitOptions>>
@@ -699,9 +705,9 @@ export interface RepoDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Create many Repos and only return the `id`
-   * const repoWithIdOnly = await prisma.repo.createManyAndReturn({
-   *   select: { id: true },
+   * // Create many Repos and only return the `projectId`
+   * const repoWithProjectIdOnly = await prisma.repo.createManyAndReturn({
+   *   select: { projectId: true },
    *   data: [
    *     // ... provide data here
    *   ]
@@ -790,9 +796,9 @@ export interface RepoDelegate<ExtArgs extends runtime.Types.Extensions.InternalA
    *   ]
    * })
    * 
-   * // Update zero or more Repos and only return the `id`
-   * const repoWithIdOnly = await prisma.repo.updateManyAndReturn({
-   *   select: { id: true },
+   * // Update zero or more Repos and only return the `projectId`
+   * const repoWithProjectIdOnly = await prisma.repo.updateManyAndReturn({
+   *   select: { projectId: true },
    *   where: {
    *     // ... provide filter here
    *   },
@@ -996,10 +1002,10 @@ export interface Prisma__RepoClient<T, Null = never, ExtArgs extends runtime.Typ
  * Fields of the Repo model
  */
 export interface RepoFieldRefs {
+  readonly projectId: Prisma.FieldRef<"Repo", 'String'>
   readonly id: Prisma.FieldRef<"Repo", 'String'>
   readonly name: Prisma.FieldRef<"Repo", 'String'>
   readonly webUrl: Prisma.FieldRef<"Repo", 'String'>
-  readonly projectId: Prisma.FieldRef<"Repo", 'String'>
 }
     
 
