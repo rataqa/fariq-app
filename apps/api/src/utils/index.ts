@@ -15,14 +15,14 @@ export async function waitForMs(ms = 200) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
-export function makeDaysOfMonth<T = { count: number; text: string; }>(yyyy: string, mm: string, template: T): Record<string, T> {
+export function makeDaysOfMonth(yyyy: string, mm: string): number[] {
   const firstDay = new Date(parseInt(yyyy), parseInt(mm) - 1, 1);
   const lastDay = lastDayOfMonth(firstDay);
-  const daysOfMonth: Record<string, T> = {};
+  const daysOfMonth: number[] = [];
 
   let date = firstDay;
   while (date <= lastDay) {
-    daysOfMonth[format(date, 'yyyyMMdd')] = template;
+    daysOfMonth.push(Number.parseInt(format(date, 'yyyyMMdd')));
     date = addDays(date, 1);
   }
 

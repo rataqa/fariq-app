@@ -1,9 +1,17 @@
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+
+import HomePage from './pages/HomePage';
+import { ApiProvider } from './contexts/ApiContext';
+
+const queryClient = new QueryClient();
+
 function App() {
   return (
-    <main>
-      <h1>Fariq</h1>
-      <p>Automated monthly timesheets for Azure DevOps teams.</p>
-    </main>
+    <ApiProvider>
+      <QueryClientProvider client={queryClient}>
+        <HomePage />
+      </QueryClientProvider>
+    </ApiProvider>
   );
 }
 

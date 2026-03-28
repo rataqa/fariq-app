@@ -6,7 +6,7 @@ import { IDb } from '../../services/db';
 import { getTopAndSkipParams, getYearAndMonthParams, makeDaysOfMonth, noOp, waitForMs } from '../../utils';
 import { IResponse } from '../types';
 import * as Types from './types';
-import { IPullRequestStats } from '../../services/db/types';
+import { IPullRequestStats, IPullRequestStatsByDay } from '../../services/db/types';
 import { addMonths } from 'date-fns';
 
 export default function makeRoutes(
@@ -262,8 +262,10 @@ export default function makeRoutes(
     const { projectId } = req.params;
 
     const { yyyy, mm } = getYearAndMonthParams(req.params); // validate year and month
-    const daysOfMonth = makeDaysOfMonth<{ count: number; text: string; }>(yyyy, mm, { count: 0, text: '' });
-    const dayList = Object.keys(daysOfMonth).map(parseInt);
+    const dayList = makeDaysOfMonth(yyyy, mm);
+    const daysOfMonth: IPullRequestStatsByDay = {};
+    dayList.forEach(d => { daysOfMonth[`${d}`] = { count: 0, text: '' }; });
+
     const prList = await db.pullRequestsInReposOfProjectAndMonth(projectId, dayList);
     const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
     res.json(stats);
@@ -271,9 +273,12 @@ export default function makeRoutes(
 
   async function getRepoPrStatsByMonthByMember(req: Types.IRequestByProjectAndYearMonthMember, res: IResponse) {
     const { projectId, memberId } = req.params;
+
     const { yyyy, mm } = getYearAndMonthParams(req.params); // validate year and month
-    const daysOfMonth = makeDaysOfMonth<IPullRequestStats>(yyyy, mm, { count: 0, text: '' });
-    const dayList = Object.keys(daysOfMonth).map(parseInt);
+    const dayList = makeDaysOfMonth(yyyy, mm);
+    const daysOfMonth: IPullRequestStatsByDay = {};
+    dayList.forEach(d => { daysOfMonth[`${d}`] = { count: 0, text: '' }; });
+
     const prList = await db.pullRequestsInReposOfProjectAndMonthByMember(projectId, dayList, memberId);
     const stats = db.pullRequestsStatsGroupedByMembers(prList, daysOfMonth);
     res.json(stats);

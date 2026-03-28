@@ -18,7 +18,7 @@ export function makeDb(db: PrismaClient, logger: IBasicLogger) {
   }
 
   async function findProjects() {
-    return db.project.findMany();
+    return db.project.findMany({ orderBy: { name: 'asc' }});
   }
 
   async function findProject(id: string) {
@@ -34,7 +34,7 @@ export function makeDb(db: PrismaClient, logger: IBasicLogger) {
   }
 
   async function findTeamsByProject(projectId: string ) {
-    return db.team.findMany({ where: { projectId }});
+    return db.team.findMany({ where: { projectId }, orderBy: { name: 'asc' }});
   }
 
   async function upsertMember(data: Db.IMember) {
@@ -53,7 +53,7 @@ export function makeDb(db: PrismaClient, logger: IBasicLogger) {
   }
 
   async function findMembersByTeam(teamId: string ) {
-    return db.member.findMany({ where: { teamId }});
+    return db.member.findMany({ where: { teamId }, orderBy: { uniqueName: 'asc' }});
   }
 
   async function upsertRepo(data: Db.IRepo) {
