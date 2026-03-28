@@ -388,7 +388,7 @@ export const ModelName = {
   Team: 'Team',
   Repo: 'Repo',
   Member: 'Member',
-  RepoPullRequest: 'RepoPullRequest'
+  PullRequest: 'PullRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -404,7 +404,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "project" | "team" | "repo" | "member" | "repoPullRequest"
+    modelProps: "project" | "team" | "repo" | "member" | "pullRequest"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -704,77 +704,77 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
-    RepoPullRequest: {
-      payload: Prisma.$RepoPullRequestPayload<ExtArgs>
-      fields: Prisma.RepoPullRequestFieldRefs
+    PullRequest: {
+      payload: Prisma.$PullRequestPayload<ExtArgs>
+      fields: Prisma.PullRequestFieldRefs
       operations: {
         findUnique: {
-          args: Prisma.RepoPullRequestFindUniqueArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload> | null
+          args: Prisma.PullRequestFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload> | null
         }
         findUniqueOrThrow: {
-          args: Prisma.RepoPullRequestFindUniqueOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         findFirst: {
-          args: Prisma.RepoPullRequestFindFirstArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload> | null
+          args: Prisma.PullRequestFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload> | null
         }
         findFirstOrThrow: {
-          args: Prisma.RepoPullRequestFindFirstOrThrowArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         findMany: {
-          args: Prisma.RepoPullRequestFindManyArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>[]
+          args: Prisma.PullRequestFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
         }
         create: {
-          args: Prisma.RepoPullRequestCreateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         createMany: {
-          args: Prisma.RepoPullRequestCreateManyArgs<ExtArgs>
+          args: Prisma.PullRequestCreateManyArgs<ExtArgs>
           result: BatchPayload
         }
         createManyAndReturn: {
-          args: Prisma.RepoPullRequestCreateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>[]
+          args: Prisma.PullRequestCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
         }
         delete: {
-          args: Prisma.RepoPullRequestDeleteArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         update: {
-          args: Prisma.RepoPullRequestUpdateArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         deleteMany: {
-          args: Prisma.RepoPullRequestDeleteManyArgs<ExtArgs>
+          args: Prisma.PullRequestDeleteManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateMany: {
-          args: Prisma.RepoPullRequestUpdateManyArgs<ExtArgs>
+          args: Prisma.PullRequestUpdateManyArgs<ExtArgs>
           result: BatchPayload
         }
         updateManyAndReturn: {
-          args: Prisma.RepoPullRequestUpdateManyAndReturnArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>[]
+          args: Prisma.PullRequestUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>[]
         }
         upsert: {
-          args: Prisma.RepoPullRequestUpsertArgs<ExtArgs>
-          result: runtime.Types.Utils.PayloadToResult<Prisma.$RepoPullRequestPayload>
+          args: Prisma.PullRequestUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$PullRequestPayload>
         }
         aggregate: {
-          args: Prisma.RepoPullRequestAggregateArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.AggregateRepoPullRequest>
+          args: Prisma.PullRequestAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregatePullRequest>
         }
         groupBy: {
-          args: Prisma.RepoPullRequestGroupByArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.RepoPullRequestGroupByOutputType>[]
+          args: Prisma.PullRequestGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PullRequestGroupByOutputType>[]
         }
         count: {
-          args: Prisma.RepoPullRequestCountArgs<ExtArgs>
-          result: runtime.Types.Utils.Optional<Prisma.RepoPullRequestCountAggregateOutputType> | number
+          args: Prisma.PullRequestCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.PullRequestCountAggregateOutputType> | number
         }
       }
     }
@@ -857,7 +857,7 @@ export const MemberScalarFieldEnum = {
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
 
 
-export const RepoPullRequestScalarFieldEnum = {
+export const PullRequestScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
@@ -872,7 +872,7 @@ export const RepoPullRequestScalarFieldEnum = {
   repoId: 'repoId'
 } as const
 
-export type RepoPullRequestScalarFieldEnum = (typeof RepoPullRequestScalarFieldEnum)[keyof typeof RepoPullRequestScalarFieldEnum]
+export type PullRequestScalarFieldEnum = (typeof PullRequestScalarFieldEnum)[keyof typeof PullRequestScalarFieldEnum]
 
 
 export const SortOrder = {
@@ -1052,7 +1052,7 @@ export type GlobalOmitConfig = {
   team?: Prisma.TeamOmit
   repo?: Prisma.RepoOmit
   member?: Prisma.MemberOmit
-  repoPullRequest?: Prisma.RepoPullRequestOmit
+  pullRequest?: Prisma.PullRequestOmit
 }
 
 /* Types for Logging */

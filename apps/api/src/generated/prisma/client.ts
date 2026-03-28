@@ -62,7 +62,7 @@ export type Repo = Prisma.RepoModel
  */
 export type Member = Prisma.MemberModel
 /**
- * Model RepoPullRequest
+ * Model PullRequest
  * 
  */
-export type RepoPullRequest = Prisma.RepoPullRequestModel
+export type PullRequest = Prisma.PullRequestModel

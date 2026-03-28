@@ -39,7 +39,7 @@ CREATE TABLE "Member" (
 );
 
 -- CreateTable
-CREATE TABLE "RepoPullRequest" (
+CREATE TABLE "PullRequest" (
     "id" INTEGER NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
@@ -53,11 +53,20 @@ CREATE TABLE "RepoPullRequest" (
     "createdByUniqueName" TEXT NOT NULL,
     "repoId" UUID NOT NULL,
 
-    CONSTRAINT "RepoPullRequest_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "PullRequest_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
+CREATE UNIQUE INDEX "Project_name_key" ON "Project"("name");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Team_name_key" ON "Team"("name");
+
+-- CreateIndex
 CREATE INDEX "Team_projectId_idx" ON "Team"("projectId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Repo_name_key" ON "Repo"("name");
 
 -- CreateIndex
 CREATE INDEX "Repo_projectId_idx" ON "Repo"("projectId");
@@ -72,16 +81,16 @@ CREATE UNIQUE INDEX "Member_uniqueName_key" ON "Member"("uniqueName");
 CREATE INDEX "Member_teamId_idx" ON "Member"("teamId");
 
 -- CreateIndex
-CREATE INDEX "RepoPullRequest_creationDay_idx" ON "RepoPullRequest"("creationDay");
+CREATE INDEX "PullRequest_creationDay_idx" ON "PullRequest"("creationDay");
 
 -- CreateIndex
-CREATE INDEX "RepoPullRequest_createdById_idx" ON "RepoPullRequest"("createdById");
+CREATE INDEX "PullRequest_createdById_idx" ON "PullRequest"("createdById");
 
 -- CreateIndex
-CREATE INDEX "RepoPullRequest_createdByUniqueName_idx" ON "RepoPullRequest"("createdByUniqueName");
+CREATE INDEX "PullRequest_createdByUniqueName_idx" ON "PullRequest"("createdByUniqueName");
 
 -- CreateIndex
-CREATE INDEX "RepoPullRequest_repoId_idx" ON "RepoPullRequest"("repoId");
+CREATE INDEX "PullRequest_repoId_idx" ON "PullRequest"("repoId");
 
 -- AddForeignKey
 ALTER TABLE "Team" ADD CONSTRAINT "Team_projectId_fkey" FOREIGN KEY ("projectId") REFERENCES "Project"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -93,7 +102,7 @@ ALTER TABLE "Repo" ADD CONSTRAINT "Repo_projectId_fkey" FOREIGN KEY ("projectId"
 ALTER TABLE "Member" ADD CONSTRAINT "Member_teamId_fkey" FOREIGN KEY ("teamId") REFERENCES "Team"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RepoPullRequest" ADD CONSTRAINT "RepoPullRequest_repoId_fkey" FOREIGN KEY ("repoId") REFERENCES "Repo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PullRequest" ADD CONSTRAINT "PullRequest_repoId_fkey" FOREIGN KEY ("repoId") REFERENCES "Repo"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "RepoPullRequest" ADD CONSTRAINT "RepoPullRequest_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "PullRequest" ADD CONSTRAINT "PullRequest_createdById_fkey" FOREIGN KEY ("createdById") REFERENCES "Member"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

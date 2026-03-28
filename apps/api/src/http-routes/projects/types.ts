@@ -2,7 +2,7 @@ import { Request } from 'express';
 
 export type IRequestByProject = Request<IRequestParamsByProject>;
 
-interface IRequestParamsByProject {
+interface IRequestParamsByProject extends Record<string, string> {
   projectId: string;
 }
 

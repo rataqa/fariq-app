@@ -1,7 +1,7 @@
 import { format } from 'date-fns';
 import { RepoPullRequests } from './types';
 
-export class RepoPullRequestsAdapter {
+export class PullRequestsAdapter {
   constructor(
     protected result: RepoPullRequests.Root,
   ) {
@@ -13,7 +13,7 @@ export class RepoPullRequestsAdapter {
     return {
       count,
       value: value.map(
-        ({ pullRequestId, title, description, status, mergeStatus, isDraft, createdBy, creationDate, closedDate }) => {
+        ({ pullRequestId, title = '', description = '', status, mergeStatus, isDraft, createdBy, creationDate, closedDate = null }) => {
           return {
             id: pullRequestId,
             title,
@@ -25,7 +25,7 @@ export class RepoPullRequestsAdapter {
             createdById        : createdBy.id,
             createdByUniqueName: createdBy.uniqueName,
             creationDay        : parseInt(format(new Date(creationDate), 'yyyyMMdd')),
-            closedDate         : closedDate || null,
+            closedDate,
           };
         }
       ),

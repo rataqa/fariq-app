@@ -26,7 +26,7 @@ export async function factory() {
   const logger = makeMyLogger(config);
 
   const prisma = makePrisma(config.prisma);
-  const db = makeDb(prisma);
+  const db = makeDb(prisma, logger.defaultLogger);
 
   const azureDevOps = makeAzureDevOpsApi(config.azureDevOps, logger.defaultLogger);
 

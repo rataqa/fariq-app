@@ -1,7 +1,7 @@
 import { Identities } from './identities';
 import { TeamMembers } from './team-members/types';
 import { Projects } from './projects/types';
-import { RepoPullRequests } from './repo-pull-requests/types';
+import { RepoPullRequests } from './pull-requests/types';
 import { RepoStats } from './repo-stats/types';
 import { Repos } from './repos/types';
 import { Teams } from './teams/types';

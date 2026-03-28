@@ -13,7 +13,7 @@ import { TeamMembersAdapter } from './team-members/adapters';
 import { TeamsAdapter } from './teams/adapters';
 import { ProjectsAdapter } from './projects/adapters';
 import { ReposAdapter } from './repos/adapters';
-import { RepoPullRequestsAdapter } from './repo-pull-requests/adapters';
+import { PullRequestsAdapter } from './pull-requests/adapters';
 import { RepoStatsAdapter } from './repo-stats/adapters';
 import { IdentitiesAdapter } from './identities';
 import { WorkItemsAdapter } from './work-items';
@@ -90,7 +90,7 @@ export function makeAzureDevOpsApi(
       const params = { $top: 100, 'searchCriteria.status': 'active', ...options };
       const path = `/${orgRef}/${projectId}/_apis/git/repositories/${repoId}/pullrequests`;
       const res = await client.get<M.IRepoPullRequests>(path, { params });
-      return new RepoPullRequestsAdapter(res.data);
+      return new PullRequestsAdapter(res.data);
     }
 
     async function repoStats(repoId: string, projectId = projectRef) {

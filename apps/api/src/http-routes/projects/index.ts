@@ -3,10 +3,11 @@ import { Application, Request } from 'express';
 
 import { IAzureDevOpsApi } from '../../services/azure-devops';
 import { IDb } from '../../services/db';
-import { makeDaysOfMonth, waitForMs } from '../../utils';
+import { getTopAndSkipParams, getYearAndMonthParams, makeDaysOfMonth, noOp, waitForMs } from '../../utils';
 import { IResponse } from '../types';
 import * as Types from './types';
 import { IPullRequestStats } from '../../services/db/types';
+import { addMonths } from 'date-fns';
 
 export default function makeRoutes(
   app: Application,
@@ -20,23 +21,35 @@ export default function makeRoutes(
     if (sync) {
       const api = azureDevOps.makeOrgApi();
       const result = await api.projects();
-      const adapted = result.adapt();
-      res.json(adapted);
+      const data = result.adapt();
+      res.json({ data });
 
-      for (const row of adapted.value) {
+      for (const row of data.value) {
         await db.upsertProject(row); // cache
       }
     } else {
-      const value = await db.findProjects();
-      res.json({ value, count: value.length });
+      const data = await db.findProjects();
+      res.json({ data, count: data.length });
     }
   }
 
   async function getProject(req: Types.IRequestByProject, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
-    const result = await api.project(projectId);
-    res.json(result);
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const data = await api.project(projectId);
+      res.json({ data });
+
+      await db.upsertProject({
+        id: data.id,
+        name: data.name,
+        description: data.description,
+      });
+    } else {
+      const data = await db.findProject(projectId);
+      res.json({ data });
+    }
   }
 
   async function getTeams(req: Types.IRequestByProject, res: IResponse) {
@@ -45,23 +58,37 @@ export default function makeRoutes(
     if (sync) {
       const api = azureDevOps.makeOrgApi();
       const result = await api.teams(projectId);
-      const adapted = result.adapt();
-      res.json(adapted);
+      const data = result.adapt();
+      res.json({ data });
 
-      for (const row of adapted.value) {
-        await db.upsertTeam(row); // cache
+      for (const row of data.value) {
+        await db.upsertTeam({ ...row, projectId }); // cache
       }
     } else {
-      const value = await db.findTeamsByProject(projectId);
-      res.json({ value, count: value.length });
+      const data = await db.findTeamsByProject(projectId);
+      res.json({ data, count: data.length });
     }
   }
 
   async function getTeam(req: Types.IRequestByProjectAndTeam, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId, teamId } = req.params;
-    const result = await api.team(projectId, teamId);
-    res.json(result);
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const data = await api.team(projectId, teamId);
+      res.json({ data });
+
+      await db.upsertTeam({
+        id: data.id,
+        name: data.name,
+        description: data.description,
+        projectId,
+      });
+    } else {
+      const value = await db.findTeamsByProject(projectId);
+      const team = value.find(t => t.id === teamId);
+      res.json({ data: team });
+    }
   }
 
   async function getTeamMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
@@ -70,41 +97,36 @@ export default function makeRoutes(
     if (sync) {
       const api = azureDevOps.makeOrgApi();
       const result = await api.teamMembers(projectId, teamId);
-      const adapted = result.adapt();
-      res.json(adapted);
+      const data = result.adapt();
+      res.json({ data });
 
-      for (const row of adapted.value) {
+      for (const row of data.value) {
         await db.upsertMember({ teamId, ...row }); // cache
       }
     } else {
-      const value = await db.findMembersByTeam(teamId);
-      res.json({ value, count: value.length });
+      const data = await db.findMembersByTeam(teamId);
+      res.json({ data, count: data.length });
     }
   }
 
-  async function getAllTeamMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
+  async function syncAllTeamsAndMembers(req: Types.IRequestByProjectAndTeam, res: IResponse) {
     const { projectId } = req.params;
+
+    const api = azureDevOps.makeOrgApi();
     const teams = await api.teams(projectId);
+    const { value: data, count } = teams.adapt();
+    res.json({ data, count }); // respond as early as possible
 
-    const result: any = [];
-
-    for (const team of teams.adapt().value) {
+    for (const team of data) {
       await db.upsertTeam(team); // cache
 
       const members = await api.teamMembers(projectId, team.id);
-      const adaptedMembers = members.adapt();
+      const { value: adaptedMembers } = members.adapt();
 
-      result.push({
-        ...team,
-        members: adaptedMembers.value,
-      });
-
-      for (const member of adaptedMembers.value) {
+      for (const member of adaptedMembers) {
         await db.upsertMember({ teamId: team.id, ...member });
       }
     }
-    res.json(result);
   }
 
   // async function getIdentities(_req: Request, res: IResponse) {
@@ -127,28 +149,41 @@ export default function makeRoutes(
   // }
 
   async function getRepos(req: Types.IRequestByProject, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId } = req.params;
-    const result = await api.repos(projectId);
-    const adapted = result.adapt();
-    res.json(adapted);
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const result = await api.repos(projectId);
+      const { value: data, count } = result.adapt();
+      res.json({ data, count });
 
-    for (const row of adapted.value) {
-      await db.upsertRepo(row); // cache
+      for (const row of data) {
+        await db.upsertRepo(row); // cache
+      }
+    } else {
+      const data = await db.findReposByProject(projectId);
+      res.json({ data, count: data.length });
     }
   }
 
   async function getRepoPullRequests(req: Types.IRequestByProjectAndRepo, res: IResponse) {
-    const api = azureDevOps.makeOrgApi();
     const { projectId, repoId } = req.params;
-    const $top = Number.parseInt(String(req.query['$top']) || '100');
-    const $skip = Number.parseInt(String(req.query['$skip']) || '0');
+    const sync = String(req.query['sync'] || '') === 'true';
+    if (sync) {
+      const api = azureDevOps.makeOrgApi();
+      const { $top, $skip } = getTopAndSkipParams(req.query);
+      const options = { $top, $skip, "searchCriteria.status": 'completed' };
+      const result = await api.repoPullRequests(repoId, options, projectId);
+      const { value: data, count } = result.adapt();
+      res.json({ data, count });
 
-    const result = await api.repoPullRequests(repoId, {
-      $top,
-      $skip,
-    }, projectId);
-    res.json(result.adapt());
+      for (const row of data) {
+        db.upsertPullRequest({ ...row, repoId }).then(noOp).catch(noOp);
+      }
+    } else {
+      const data = await db.pullRequestsInRepo(repoId);
+      res.json({ data, count: data.length });
+    }
   }
 
   async function getRepoStats(req: Types.IRequestByProjectAndRepo, res: IResponse) {
@@ -160,91 +195,59 @@ export default function makeRoutes(
 
   async function syncAllPullRequestsByMonth(req: Types.IRequestByProjectAndYearMonth, res: IResponse) {
     const api = azureDevOps.makeOrgApi();
-    const { projectId, yyyy = '2026', mm = '03' } = req.params;
+    const { projectId } = req.params;
+
     const project = await db.findProject(projectId);
-    res.json(project);
+    res.json({ data: project });
     if (!project) return;
-    
+
+    const { year, month } = getYearAndMonthParams(req.params); // validate year and month
+
     const repos = await db.findReposByProject(projectId);
 
-    const currentYear = new Date().getFullYear();
-    const year = parseInt(yyyy);
-    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
-      logger.warn('invalid year', { yyyy });
-      return;
-    }
+    const start = `${year}-${month}-01T00:00:00Z`;
+    const nextMonth = addMonths(new Date(year, month - 1, 1), 1);
+    const end = nextMonth.toISOString();
+    const baseOptions = {
+      $top: 100,
+      "searchCriteria.minTime": start,
+      "searchCriteria.maxTime": end,
+    };
+  
+    for (const repo of repos) {
+      logger.info(' -- completed PRs...', { repo: repo.name });
+      const pullRequests = await api.repoPullRequests(repo.id, {
+        //"searchCriteria.creatorId": member.id,
+        ...baseOptions,
+        "searchCriteria.status": 'completed',
+      }, projectId);
+      const adapted = pullRequests.adapt();
+      logger.info(' > found', { count: adapted.count });
+      for (const pr of adapted.value) {
+        db.upsertPullRequest({ repoId: repo.id, ...pr }, repo.name).then(noOp).catch(() => logger.error('  - ERROR!'));
+      }
+      await waitForMs(100);
 
-    const month = parseInt(mm);
-    if (isNaN(month) || (month <= 0) || (12 < month)) {
-      logger.warn('invalid month', { mm });
-      return;
-    }
-
-    const start = `${yyyy}-${month}-01T00:00:01`;
-    const end = `${yyyy}-${month+1}-01T00:00:00`;
-
-    for (const repo of repos.filter(r => r.projectId === projectId)) {
-      logger.info(' -', { repo: repo.name });
-      //for (const member of members) {
-
-        //logger.info(' -- completed PRs...', { repo: repo.name, member: member.uniqueName });
-        logger.info(' -- completed PRs...', { repo: repo.name });
-        const pullRequests = await api.repoPullRequests(repo.id, {
-          //"searchCriteria.creatorId": member.id,
-          "searchCriteria.minTime": start,
-          "searchCriteria.maxTime": end,
-          "searchCriteria.status": 'completed',
-          $top: 100,
-        }, projectId);
-        const adapted = pullRequests.adapt();
-        logger.info(' > found', { count: adapted.count });
-        for (const pr of adapted.value) {
-          //logger.info('PR', { repo: repo.name, member: member.uniqueName, pr: pr.id });
-          logger.info('PR', { repo: repo.name, member: pr.createdByUniqueName, pr: pr.id });
-          await db.upsertPullRequest({ repoId: repo.id, ...pr });
-        }
-        await waitForMs(100);
-
-        //logger.info(' -- active PRs...', { repo: repo.name, member: member.uniqueName });
-        logger.info(' -- active PRs...', { repo: repo.name });
-        const pullRequests2 = await api.repoPullRequests(repo.id, {
-          //"searchCriteria.creatorId": member.id,
-          "searchCriteria.minTime": start,
-          "searchCriteria.maxTime": end,
-          "searchCriteria.status": 'active',
-          $top: 100,
-        }, projectId);
-        const adapted2 = pullRequests2.adapt();
-        logger.info(' > found', { count: adapted2.count });
-        for (const pr of adapted2.value) {
-          //logger.info('PR', { repo: repo.name, member: member.uniqueName, pr: pr.id });
-          logger.info('PR', { repo: repo.name, member: pr.createdByUniqueName, pr: pr.id });
-          await db.upsertPullRequest({ repoId: repo.id, ...pr });
-        }
-        await waitForMs(100);
-        //break; // do it once for testing
-      //}
-      //break; // do it once for testing
+      logger.info(' -- active PRs...', { repo: repo.name });
+      const pullRequests2 = await api.repoPullRequests(repo.id, {
+        //"searchCriteria.creatorId": member.id,
+        ...baseOptions,
+        "searchCriteria.status": 'active',
+      }, projectId);
+      const adapted2 = pullRequests2.adapt();
+      logger.info(' > found', { count: adapted2.count });
+      for (const pr of adapted2.value) {
+        db.upsertPullRequest({ repoId: repo.id, ...pr }, repo.name).then(noOp).catch(() => logger.error('  - ERROR!'));
+      }
+      await waitForMs(100);
     }
     logger.info('DONE!');
   }
 
   async function getRepoPrStatsByMonth(req: Types.IRequestByProjectAndYearMonth, res: IResponse) {
-    const { projectId, yyyy, mm } = req.params;
+    const { projectId } = req.params;
 
-    const currentYear = new Date().getFullYear();
-    const year = parseInt(yyyy);
-    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
-      logger.warn('invalid year', { yyyy });
-      return res.json({ error: 'invalid year', yyyy });
-    }
-
-    const month = parseInt(mm);
-    if (isNaN(month) || (month <= 0) || (12 < month)) {
-      logger.warn('invalid month', { mm });
-      return res.json({ error: 'invalid month', mm });
-    }
-
+    const { yyyy, mm } = getYearAndMonthParams(req.params); // validate year and month
     const daysOfMonth = makeDaysOfMonth<{ count: number; text: string; }>(yyyy, mm, { count: 0, text: '' });
     const dayList = Object.keys(daysOfMonth).map(parseInt);
     const prList = await db.pullRequestsInReposOfProjectAndMonth(projectId, dayList);
@@ -253,21 +256,8 @@ export default function makeRoutes(
   }
 
   async function getRepoPrStatsByMonthByMember(req: Types.IRequestByProjectAndYearMonthMember, res: IResponse) {
-    const { projectId, memberId, yyyy, mm } = req.params;
-
-    const currentYear = new Date().getFullYear();
-    const year = parseInt(yyyy);
-    if (isNaN(year) || (year < currentYear - 1) || (currentYear < year)) {
-      logger.warn('invalid year', { yyyy });
-      return res.json({ error: 'invalid year', yyyy });
-    }
-
-    const month = parseInt(mm);
-    if (isNaN(month) || (month <= 0) || (12 < month)) {
-      logger.warn('invalid month', { mm });
-      return res.json({ error: 'invalid month', mm });
-    }
-
+    const { projectId, memberId } = req.params;
+    const { yyyy, mm } = getYearAndMonthParams(req.params); // validate year and month
     const daysOfMonth = makeDaysOfMonth<IPullRequestStats>(yyyy, mm, { count: 0, text: '' });
     const dayList = Object.keys(daysOfMonth).map(parseInt);
     const prList = await db.pullRequestsInReposOfProjectAndMonthByMember(projectId, dayList, memberId);
@@ -292,13 +282,13 @@ export default function makeRoutes(
   app.get('/projects', getProjects);
   app.get('/projects/:projectId', getProject);
   app.get('/projects/:projectId/teams', getTeams);
-  app.get('/projects/:projectId/teams-all', getAllTeamMembers);
+  app.get('/projects/:projectId/sync-teams-and-members', syncAllTeamsAndMembers);
   app.get('/projects/:projectId/teams/:teamId', getTeam);
   app.get('/projects/:projectId/teams/:teamId/members', getTeamMembers);
   app.get('/projects/:projectId/repos', getRepos);
   app.get('/projects/:projectId/repos/:repoId/pull-requests', getRepoPullRequests);
   app.get('/projects/:projectId/repos/:repoId/stats', getRepoStats);
-  app.get('/projects/:projectId/sync-pull-requests/:yyyy/:mm', syncAllPullRequestsByMonth);
+  app.get('/projects/:projectId/pull-requests/:yyyy/:mm', syncAllPullRequestsByMonth);
   app.get('/projects/:projectId/pull-request-stats/:yyyy/:mm', getRepoPrStatsByMonth);
   app.get('/projects/:projectId/members/:memberId/pull-request-stats/:yyyy/:mm', getRepoPrStatsByMonthByMember);
 
@@ -314,7 +304,7 @@ export default function makeRoutes(
     getTeams,
     getTeam,
     getTeamMembers,
-    getAllTeamMembers,
+    syncAllTeamsAndMembers,
     getRepos,
     getRepoPullRequests,
     getRepoStats,

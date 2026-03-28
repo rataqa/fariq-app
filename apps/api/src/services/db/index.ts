@@ -1,17 +1,20 @@
-import { Db, IPullRequestStatsByDay } from './types';
-import { dateDiffInHours, deepClone } from '../../utils';
+import { IBasicLogger } from '@rataqa/sijil';
+
 import { PrismaClient } from '../../generated/prisma/client';
+import { dateDiffInHours, deepClone } from '../../utils';
+import { Db, IPullRequestStatsByDay } from './types';
+import { title } from 'process';
 
 export type IDb = ReturnType<typeof makeDb>;
 
-export function makeDb(db: PrismaClient) {
+export function makeDb(db: PrismaClient, logger: IBasicLogger) {
 
   async function upsertProject(data: Db.IProject) {
-    const found = await db.project.findUnique({ where: { id: data.id }});
+    let found = await db.project.findUnique({ where: { id: data.id }});
     if (!found) {
-      await db.project.create({ data });
+      found = await db.project.create({ data });
     }
-    return !!found;
+    return found;
   }
 
   async function findProjects() {
@@ -23,11 +26,11 @@ export function makeDb(db: PrismaClient) {
   }
 
   async function upsertTeam(data: Db.ITeam) {
-    const found = db.team.findUnique({ where: { id: data.id }});
+    let found = await db.team.findUnique({ where: { id: data.id }});
     if (!found) {
-      await db.team.create({ data });
+      found = await db.team.create({ data });
     }
-    return !!found;
+    return found;
   }
 
   async function findTeamsByProject(projectId: string ) {
@@ -35,11 +38,12 @@ export function makeDb(db: PrismaClient) {
   }
 
   async function upsertMember(data: Db.IMember) {
-    const found = db.member.findUnique({ where: { id: data.id }});
+    let found = await db.member.findUnique({ where: { id: data.id }});
     if (!found) {
-      await db.member.create({ data });
+      found = await db.member.create({ data });
+      logger.info('new member', { member: data.uniqueName });
     }
-    return !!found;
+    return found;
   }
 
   async function findMembersByProject(projectId: string ) {
@@ -53,38 +57,55 @@ export function makeDb(db: PrismaClient) {
   }
 
   async function upsertRepo(data: Db.IRepo) {
-    const found = db.repo.findUnique({ where: { id: data.id }});
+    let found = await db.repo.findUnique({ where: { id: data.id }});
     if (!found) {
-      await db.repo.create({ data });
+      found = await db.repo.create({ data });
+      logger.info('new repo', { name: data.name });
     }
-    return !!found;
+    return found;
   }
 
   async function findReposByProject(projectId: string ) {
     return db.repo.findMany({ where: { projectId }});
   }
 
-  async function upsertPullRequest(data: Db.IRepoPullRequest) {
-    const found = db.repoPullRequest.findUnique({ where: { id: data.id }});
+  async function upsertPullRequest(data: Db.IPullRequest, repoName = '') {
+    let found = await db.pullRequest.findUnique({ where: { id: data.id }});
     if (!found) {
-      await db.repoPullRequest.create({ data });
+      logger.info('  + insert PR', { repo: repoName, id: data.id, title: data.title });
+      found = await db.pullRequest.create({ data });
+      //logger.info('new PR', { id: data.id, title: data.title });
+    } else {
+      logger.info('  * update PR', { repo: repoName, id: data.id, title: data.title });
+      const change = {
+        isDraft: data.isDraft,
+        status: data.status,
+        ...(found.mergeStatus !== data.mergeStatus && { mergeStatus: data.mergeStatus }),
+        ...(found.title !== data.title && { title: data.title }),
+        ...(found.description !== data.description && { description: data.description }),
+      };
+      await db.pullRequest.update({ where: { id: data.id }, data: change });
+      logger.debug('updated PR', { id: data.id, change });
     }
-    return !!found;
+    return found;
   }
 
   async function pullRequestsInReposOfProject(projectId: string) {
     const repos = await db.repo.findMany({ where: { projectId }});
     const repoIdList = repos.map(r => r.id);
-    const pullRequests = await db.repoPullRequest.findMany({
-      where: { repoId: { in: repoIdList }}
-    });
+    const pullRequests = await db.pullRequest.findMany({ where: { repoId: { in: repoIdList }}});
+    return pullRequests;
+  }
+
+  async function pullRequestsInRepo(repoId: string) {
+    const pullRequests = await db.pullRequest.findMany({ where: { repoId }});
     return pullRequests;
   }
 
   async function pullRequestsInReposOfProjectAndMonth(projectId: string, dayList: number[]) {
     const repos = await db.repo.findMany({ where: { projectId }});
     const repoIdList = repos.map(r => r.id);
-    const pullRequests = await db.repoPullRequest.findMany({
+    const pullRequests = await db.pullRequest.findMany({
       where: {
         repoId: { in: repoIdList },
         creationDay: { in: dayList },
@@ -96,7 +117,7 @@ export function makeDb(db: PrismaClient) {
   async function pullRequestsInReposOfProjectAndMonthByMember(projectId: string, dayList: number[], memberId: string) {
     const repos = await db.repo.findMany({ where: { projectId }});
     const repoIdList = repos.map(r => r.id);
-    const pullRequests = await db.repoPullRequest.findMany({
+    const pullRequests = await db.pullRequest.findMany({
       where: {
         repoId: { in: repoIdList },
         creationDay: { in: dayList },
@@ -106,7 +127,7 @@ export function makeDb(db: PrismaClient) {
     return pullRequests;
   }
 
-  function pullRequestsStatsGroupedByMembers(prList: Db.IRepoPullRequest[], daysOfMonth: IPullRequestStatsByDay) {
+  function pullRequestsStatsGroupedByMembers(prList: Db.IPullRequest[], daysOfMonth: IPullRequestStatsByDay) {
     const data: Record<string, IPullRequestStatsByDay> = {};
 
     let totalPullRequests = 0;
@@ -157,6 +178,7 @@ export function makeDb(db: PrismaClient) {
     findReposByProject,
 
     upsertPullRequest,
+    pullRequestsInRepo,
     pullRequestsInReposOfProject,
     pullRequestsInReposOfProjectAndMonth,
     pullRequestsInReposOfProjectAndMonthByMember,

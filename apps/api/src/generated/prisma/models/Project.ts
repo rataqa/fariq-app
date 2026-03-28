@@ -180,14 +180,14 @@ export type ProjectOrderByWithRelationInput = {
 
 export type ProjectWhereUniqueInput = Prisma.AtLeast<{
   id?: string
+  name?: string
   AND?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
   OR?: Prisma.ProjectWhereInput[]
   NOT?: Prisma.ProjectWhereInput | Prisma.ProjectWhereInput[]
-  name?: Prisma.StringFilter<"Project"> | string
   description?: Prisma.StringFilter<"Project"> | string
   teams?: Prisma.TeamListRelationFilter
   repos?: Prisma.RepoListRelationFilter
-}, "id">
+}, "id" | "name">
 
 export type ProjectOrderByWithAggregationInput = {
   id?: Prisma.SortOrder

@@ -1,13 +1,4 @@
 export namespace Db {
-  export interface IData {
-    projects  : Array<IProject>;
-    teams     : Array<ITeam>;
-    members   : Array<IMember>;
-    repos     : Array<IRepo>;
-    //identities: Array<IIdentity>;
-    //users     : Array<IUser>;
-    pullRequests: Array<IRepoPullRequest>;
-  }
 
   export interface IProject {
     id         : string;
@@ -37,7 +28,7 @@ export namespace Db {
     displayName: string;
   }
 
-  export interface IRepoPullRequest {
+  export interface IPullRequest {
     repoId             : string;
     id                 : number;
     title              : string;

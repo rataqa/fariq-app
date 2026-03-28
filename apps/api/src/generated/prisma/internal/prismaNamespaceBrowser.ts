@@ -55,7 +55,7 @@ export const ModelName = {
   Team: 'Team',
   Repo: 'Repo',
   Member: 'Member',
-  RepoPullRequest: 'RepoPullRequest'
+  PullRequest: 'PullRequest'
 } as const
 
 export type ModelName = (typeof ModelName)[keyof typeof ModelName]
@@ -114,7 +114,7 @@ export const MemberScalarFieldEnum = {
 export type MemberScalarFieldEnum = (typeof MemberScalarFieldEnum)[keyof typeof MemberScalarFieldEnum]
 
 
-export const RepoPullRequestScalarFieldEnum = {
+export const PullRequestScalarFieldEnum = {
   id: 'id',
   title: 'title',
   description: 'description',
@@ -129,7 +129,7 @@ export const RepoPullRequestScalarFieldEnum = {
   repoId: 'repoId'
 } as const
 
-export type RepoPullRequestScalarFieldEnum = (typeof RepoPullRequestScalarFieldEnum)[keyof typeof RepoPullRequestScalarFieldEnum]
+export type PullRequestScalarFieldEnum = (typeof PullRequestScalarFieldEnum)[keyof typeof PullRequestScalarFieldEnum]
 
 
 export const SortOrder = {

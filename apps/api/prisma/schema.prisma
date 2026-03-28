@@ -12,7 +12,7 @@ datasource db {
 
 model Project {
   id          String @id @db.Uuid
-  name        String
+  name        String @unique
   description String
 
   // relationships
@@ -22,7 +22,7 @@ model Project {
 
 model Team {
   id          String @id @db.Uuid
-  name        String
+  name        String @unique
   description String
   projectId   String @db.Uuid
 
@@ -36,13 +36,13 @@ model Team {
 
 model Repo {
   id        String @id @db.Uuid
-  name      String
+  name      String @unique
   webUrl    String
   projectId String @db.Uuid
 
   // relationships
   project      Project @relation(fields: [projectId], references: [id])
-  pullRequests RepoPullRequest[]
+  pullRequests PullRequest[]
 
   // indexes
   @@index([projectId])
@@ -57,13 +57,13 @@ model Member {
 
   // relationships
   team         Team @relation(fields: [teamId], references: [id])
-  pullRequests RepoPullRequest[]
+  pullRequests PullRequest[]
 
   // indexes
   @@index([teamId])
 }
 
-model RepoPullRequest {
+model PullRequest {
   id                  Int @id
   title               String
   description         String

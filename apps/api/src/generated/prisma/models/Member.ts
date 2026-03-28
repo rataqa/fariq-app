@@ -183,7 +183,7 @@ export type MemberWhereInput = {
   displayName?: Prisma.StringFilter<"Member"> | string
   teamId?: Prisma.UuidFilter<"Member"> | string
   team?: Prisma.XOR<Prisma.TeamScalarRelationFilter, Prisma.TeamWhereInput>
-  pullRequests?: Prisma.RepoPullRequestListRelationFilter
+  pullRequests?: Prisma.PullRequestListRelationFilter
 }
 
 export type MemberOrderByWithRelationInput = {
@@ -193,7 +193,7 @@ export type MemberOrderByWithRelationInput = {
   displayName?: Prisma.SortOrder
   teamId?: Prisma.SortOrder
   team?: Prisma.TeamOrderByWithRelationInput
-  pullRequests?: Prisma.RepoPullRequestOrderByRelationAggregateInput
+  pullRequests?: Prisma.PullRequestOrderByRelationAggregateInput
 }
 
 export type MemberWhereUniqueInput = Prisma.AtLeast<{
@@ -206,7 +206,7 @@ export type MemberWhereUniqueInput = Prisma.AtLeast<{
   displayName?: Prisma.StringFilter<"Member"> | string
   teamId?: Prisma.UuidFilter<"Member"> | string
   team?: Prisma.XOR<Prisma.TeamScalarRelationFilter, Prisma.TeamWhereInput>
-  pullRequests?: Prisma.RepoPullRequestListRelationFilter
+  pullRequests?: Prisma.PullRequestListRelationFilter
 }, "id" | "descriptor" | "uniqueName">
 
 export type MemberOrderByWithAggregationInput = {
@@ -237,7 +237,7 @@ export type MemberCreateInput = {
   uniqueName: string
   displayName: string
   team: Prisma.TeamCreateNestedOneWithoutMembersInput
-  pullRequests?: Prisma.RepoPullRequestCreateNestedManyWithoutCreatedByInput
+  pullRequests?: Prisma.PullRequestCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateInput = {
@@ -246,7 +246,7 @@ export type MemberUncheckedCreateInput = {
   uniqueName: string
   displayName: string
   teamId: string
-  pullRequests?: Prisma.RepoPullRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  pullRequests?: Prisma.PullRequestUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUpdateInput = {
@@ -255,7 +255,7 @@ export type MemberUpdateInput = {
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   team?: Prisma.TeamUpdateOneRequiredWithoutMembersNestedInput
-  pullRequests?: Prisma.RepoPullRequestUpdateManyWithoutCreatedByNestedInput
+  pullRequests?: Prisma.PullRequestUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateInput = {
@@ -264,7 +264,7 @@ export type MemberUncheckedUpdateInput = {
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
   teamId?: Prisma.StringFieldUpdateOperationsInput | string
-  pullRequests?: Prisma.RepoPullRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  pullRequests?: Prisma.PullRequestUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberCreateManyInput = {
@@ -390,7 +390,7 @@ export type MemberCreateWithoutTeamInput = {
   descriptor: string
   uniqueName: string
   displayName: string
-  pullRequests?: Prisma.RepoPullRequestCreateNestedManyWithoutCreatedByInput
+  pullRequests?: Prisma.PullRequestCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberUncheckedCreateWithoutTeamInput = {
@@ -398,7 +398,7 @@ export type MemberUncheckedCreateWithoutTeamInput = {
   descriptor: string
   uniqueName: string
   displayName: string
-  pullRequests?: Prisma.RepoPullRequestUncheckedCreateNestedManyWithoutCreatedByInput
+  pullRequests?: Prisma.PullRequestUncheckedCreateNestedManyWithoutCreatedByInput
 }
 
 export type MemberCreateOrConnectWithoutTeamInput = {
@@ -498,7 +498,7 @@ export type MemberUpdateWithoutTeamInput = {
   descriptor?: Prisma.StringFieldUpdateOperationsInput | string
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
-  pullRequests?: Prisma.RepoPullRequestUpdateManyWithoutCreatedByNestedInput
+  pullRequests?: Prisma.PullRequestUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateWithoutTeamInput = {
@@ -506,7 +506,7 @@ export type MemberUncheckedUpdateWithoutTeamInput = {
   descriptor?: Prisma.StringFieldUpdateOperationsInput | string
   uniqueName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
-  pullRequests?: Prisma.RepoPullRequestUncheckedUpdateManyWithoutCreatedByNestedInput
+  pullRequests?: Prisma.PullRequestUncheckedUpdateManyWithoutCreatedByNestedInput
 }
 
 export type MemberUncheckedUpdateManyWithoutTeamInput = {
@@ -543,7 +543,7 @@ export type MemberCountOutputTypeDefaultArgs<ExtArgs extends runtime.Types.Exten
  * MemberCountOutputType without action
  */
 export type MemberCountOutputTypeCountPullRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
-  where?: Prisma.RepoPullRequestWhereInput
+  where?: Prisma.PullRequestWhereInput
 }
 
 
@@ -601,7 +601,7 @@ export type $MemberPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs
   name: "Member"
   objects: {
     team: Prisma.$TeamPayload<ExtArgs>
-    pullRequests: Prisma.$RepoPullRequestPayload<ExtArgs>[]
+    pullRequests: Prisma.$PullRequestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1004,7 +1004,7 @@ readonly fields: MemberFieldRefs;
 export interface Prisma__MemberClient<T, Null = never, ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs, GlobalOmitOptions = {}> extends Prisma.PrismaPromise<T> {
   readonly [Symbol.toStringTag]: "PrismaPromise"
   team<T extends Prisma.TeamDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TeamDefaultArgs<ExtArgs>>): Prisma.Prisma__TeamClient<runtime.Types.Result.GetResult<Prisma.$TeamPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
-  pullRequests<T extends Prisma.Member$pullRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$pullRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$RepoPullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  pullRequests<T extends Prisma.Member$pullRequestsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Member$pullRequestsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PullRequestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1444,23 +1444,23 @@ export type MemberDeleteManyArgs<ExtArgs extends runtime.Types.Extensions.Intern
  */
 export type Member$pullRequestsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   /**
-   * Select specific fields to fetch from the RepoPullRequest
+   * Select specific fields to fetch from the PullRequest
    */
-  select?: Prisma.RepoPullRequestSelect<ExtArgs> | null
+  select?: Prisma.PullRequestSelect<ExtArgs> | null
   /**
-   * Omit specific fields from the RepoPullRequest
+   * Omit specific fields from the PullRequest
    */
-  omit?: Prisma.RepoPullRequestOmit<ExtArgs> | null
+  omit?: Prisma.PullRequestOmit<ExtArgs> | null
   /**
    * Choose, which related nodes to fetch as well
    */
-  include?: Prisma.RepoPullRequestInclude<ExtArgs> | null
-  where?: Prisma.RepoPullRequestWhereInput
-  orderBy?: Prisma.RepoPullRequestOrderByWithRelationInput | Prisma.RepoPullRequestOrderByWithRelationInput[]
-  cursor?: Prisma.RepoPullRequestWhereUniqueInput
+  include?: Prisma.PullRequestInclude<ExtArgs> | null
+  where?: Prisma.PullRequestWhereInput
+  orderBy?: Prisma.PullRequestOrderByWithRelationInput | Prisma.PullRequestOrderByWithRelationInput[]
+  cursor?: Prisma.PullRequestWhereUniqueInput
   take?: number
   skip?: number
-  distinct?: Prisma.RepoPullRequestScalarFieldEnum | Prisma.RepoPullRequestScalarFieldEnum[]
+  distinct?: Prisma.PullRequestScalarFieldEnum | Prisma.PullRequestScalarFieldEnum[]
 }
 
 /**
